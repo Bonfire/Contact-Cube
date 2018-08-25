@@ -17,13 +17,16 @@
     // Handle display of email error message.
     function checkEmail()
     {
-      if (document.getElementById("inputEmail").checkValidity())
+      var emailHelpText = {style:{display:"block"}}; // placeholder
+      //var emailHelpText = document.getElementById("emailHelpText");
+    
+      if (document.getElementById("inputEmail").checkValidity() && emailHelpText.style.display == "block")
       {
-        //document.getElementById("emailHelpText").style.display = "none";
+        emailHelpText.style.display = "none";
       }
-      else
+      else if (emailHelpText.style.display == "none")
       {
-        //document.getElementById("emailHelpText").style.display = "block";
+        emailHelpText.style.display = "block";
       }
     
       confirmEmail();
@@ -37,13 +40,13 @@
       
       if (inputField.value === inputConfirmField.value)
       {
-        if (inputConfirmField.value !== "" && inputField.checkValidity())
+        if (inputConfirmField.value !== "" && inputField.checkValidity() && !inputConfirmField.checkValidity())
         {
           //document.getElementById("confirmEmailHelpText").style.display = "none";
           inputConfirmField.setCustomValidity("");
         }
       }
-      else
+      else if (inputConfirmField.checkValidity())
       {
         //document.getElementById("confirmEmailHelpText").style.display = "block";
         inputConfirmField.setCustomValidity("Invalid");
@@ -53,13 +56,16 @@
     // Handle display of password error message.
     function checkPassword()
     {
-      if (document.getElementById("inputPassword").checkValidity())
+      var passwordHelpText = {style:{display:"block"}}; // placeholder
+      //var passwordHelpText = document.getElementById("passwordHelpText");
+    
+      if (document.getElementById("inputPassword").checkValidity() && passwordHelpText.style.display == "block")
       {
-        //document.getElementById("passwordHelpText").style.display = "none";
+        passwordHelpText.style.display = "none";
       }
-      else
+      else if (passwordHelpText.style.display == "none")
       {
-        //document.getElementById("passwordHelpText").style.display = "block";
+        passwordHelpText.style.display = "block";
       }
     
       confirmPassword();
@@ -73,13 +79,13 @@
       
       if (inputField.value === inputConfirmField.value)
       {
-        if (inputConfirmField.value !== "" && inputField.checkValidity())
+        if (inputConfirmField.value !== "" && inputField.checkValidity() && !inputConfirmField.checkValidity())
         {
           //document.getElementById("confirmPasswordHelpText").style.display = "none";
           inputConfirmField.setCustomValidity("");
         }
       }
-      else
+      else if (inputConfirmField.checkValidity())
       {
         //document.getElementById("confirmPasswordHelpText").style.display = "block";
         inputConfirmField.setCustomValidity("Invalid");
@@ -114,10 +120,6 @@
       }
     });
   </script>
-  
-  <style>
-
-  </style>
 </head>
 
 <body>

@@ -12,7 +12,109 @@
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
+  
+  <script type="application/javascript">
+    // Handle display of email error message.
+    function checkEmail()
+    {
+      if (document.getElementById("inputEmail").checkValidity())
+      {
+        //document.getElementById("emailHelpText").style.display = "none";
+      }
+      else
+      {
+        //document.getElementById("emailHelpText").style.display = "block";
+      }
+    
+      confirmEmail();
+    }
+    
+    // Ensure both emails are the same and valid.
+    function confirmEmail()
+    {
+      var inputField = document.getElementById("inputEmail");
+      var inputConfirmField = document.getElementById("inputConfirmEmail");
+      
+      if (inputField.value === inputConfirmField.value)
+      {
+        if (inputConfirmField.value !== "" && inputField.checkValidity())
+        {
+          //document.getElementById("confirmEmailHelpText").style.display = "none";
+          inputConfirmField.setCustomValidity("");
+        }
+      }
+      else
+      {
+        //document.getElementById("confirmEmailHelpText").style.display = "block";
+        inputConfirmField.setCustomValidity("Invalid");
+      }
+    }
+    
+    // Handle display of password error message.
+    function checkPassword()
+    {
+      if (document.getElementById("inputPassword").checkValidity())
+      {
+        //document.getElementById("passwordHelpText").style.display = "none";
+      }
+      else
+      {
+        //document.getElementById("passwordHelpText").style.display = "block";
+      }
+    
+      confirmPassword();
+    }
+    
+    // Ensure both passwords are the same and valid.
+    function confirmPassword()
+    {
+      var inputField = document.getElementById("inputPassword");
+      var inputConfirmField = document.getElementById("inputConfirmPassword");
+      
+      if (inputField.value === inputConfirmField.value)
+      {
+        if (inputConfirmField.value !== "" && inputField.checkValidity())
+        {
+          //document.getElementById("confirmPasswordHelpText").style.display = "none";
+          inputConfirmField.setCustomValidity("");
+        }
+      }
+      else
+      {
+        //document.getElementById("confirmPasswordHelpText").style.display = "block";
+        inputConfirmField.setCustomValidity("Invalid");
+      }
+    }
+    
+    // Since help messages and field confirmation aren't built into HTML5,
+    // they have to be implemented.
+    $(document).on("keyup", "#inputEmail", checkEmail);
+    $(document).on("keyup", "#inputConfirmEmail", confirmEmail);
+    
+    $(document).on("keyup", "#inputPassword", checkPassword);
+    $(document).on("keyup", "#inputConfirmPassword", confirmPassword);
+    
+    // Enables registration when all forms are valid.  On 'keyup' for responsiveness.
+    $(document).keyup(function ()
+    {
+      var inputFirstNameFieldValid = document.getElementById("inputFirstName").checkValidity();
+      var inputLastNameFieldValid = document.getElementById("inputLastName").checkValidity();
+      var inputEmailFieldValid = document.getElementById("inputEmail").checkValidity();
+      var inputEmailConfirmFieldValid = document.getElementById("inputConfirmEmail").checkValidity();
+      var inputPasswordFieldValid = document.getElementById("inputPassword").checkValidity();
+      var inputPasswordConfirmFieldValid = document.getElementById("inputConfirmPassword").checkValidity();
+      
+      if (inputFirstNameFieldValid && inputLastNameFieldValid && inputEmailFieldValid && inputEmailConfirmFieldValid && inputPasswordFieldValid && inputPasswordConfirmFieldValid)
+      {
+        $('#register').prop('disabled', false);
+      }
+      else
+      {
+        $('#register').prop('disabled', true);
+      }
+    });
+  </script>
+  
   <style>
 
   </style>
@@ -39,35 +141,35 @@
         <center>
           <h4><b>Register Here</b></h4></center>
         <hr>
-        <form>
+        <form class="container was-validated" novalidate="">
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="inputFirstName">First Name</label>
-              <input type="text" class="form-control" id="inputFirstName" placeholder="First Name">
+              <input type="text" class="form-control" id="inputFirstName" placeholder="First Name" required>
             </div>
             <div class="form-group col-md-6">
               <label for="inputLastName">Last Name</label>
-              <input type="text" class="form-control" id="inputPassword4" placeholder="Last Name">
+              <input type="text" class="form-control" id="inputLastName" placeholder="Last Name" required>
             </div>
           </div>
           <div class="form-group">
             <label for="inputEmail">Email</label>
-            <input type="text" class="form-control" id="inputEmail" placeholder="Email">
+            <input type="email" class="form-control" id="inputEmail" placeholder="Email" required>
           </div>
           <div class="form-group">
             <label for="inputConfirmEmail">Confirm Email</label>
-            <input type="text" class="form-control" id="inputConfirmEmail" placeholder="Confirm Email">
+            <input type="text" class="form-control" id="inputConfirmEmail" placeholder="Confirm Email" required>
           </div>
           <div class="form-group">
             <label for="inputPassword">Password</label>
-            <input type="password" class="form-control" id="inputPassword" placeholder="Password">
+            <input type="password" class="form-control" id="inputPassword" placeholder="Password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
           </div>
           <div class="form-group">
             <label for="inputConfirmPassword">Confirm Password</label>
-            <input type="password" class="form-control" id="inputConfirmPassword" placeholder="Confirm Password">
+            <input type="password" class="form-control" id="inputConfirmPassword" placeholder="Confirm Password" required>
           </div>
 
-          <button type="submit" class="btn btn-primary">Register</button>
+          <button type="submit" class="btn btn-primary" id="register" disabled=true>Register</button>
         </form>
         <hr>
       </div>

@@ -10,31 +10,9 @@ import com.google.gson.annotations.SerializedName;
 public class User {
 
     public int id = -1;
-    public String name;        // username of the registrant
-    public String password;    // password HASH of the registrant
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String email;        // email/username of the user
+    public String password;     // password HASH of the user
+    public String firstname;    // first name of the user
+    public String lastname;     // last name of the user
 
 }

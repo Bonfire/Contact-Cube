@@ -18,8 +18,10 @@ public interface UserDao {
             "CREATE TABLE IF NOT EXISTS users " +
                     "(" +
                     "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
-                    "name VARCHAR(255) NOT NULL," +
-                    "password VARCHAR(255) NOT NULL" +
+                    "email VARCHAR(255) NOT NULL," +
+                    "password VARCHAR(255) NOT NULL," +
+                    "firstname VARCHAR(255) NOT NULL," +
+                    "lastname VARCHAT(255) NOT NULL" +
                     ")"
     )
     void createTable();
@@ -30,17 +32,12 @@ public interface UserDao {
      * @param user the user to insert into the database
      * @return the created ID (auto-increment) of the user
      */
-    @SqlUpdate("INSERT INTO users (name, password) values (:name, :password)")
+    @SqlUpdate("INSERT INTO users (email, password) values (:email, :password)")
     @GetGeneratedKeys("id")
     long insert(@BindFields final User user);
 
-    @SqlQuery("SELECT * FROM users WHERE name = ?")
+    @SqlQuery("SELECT * FROM users WHERE email = ?")
     @RegisterBeanMapper(User.class)
-    List<User> getUsersByName(final String name);
-
-    @SqlQuery("SELECT * FROM users WHERE name = ?")
-    @RegisterBeanMapper(User.class)
-    User getUserByName(final String name);
+    User getUserByEmail(final String email);
 
 }
-

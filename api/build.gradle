@@ -18,6 +18,7 @@ dependencies {
     // JDBC stuff for connection to MariaDB
     compile 'org.mariadb.jdbc:mariadb-java-client:2.2.6'
     compile 'org.jdbi:jdbi3-core:3.4.0'
+    compile 'org.jdbi:jdbi3-sqlobject:3.4.0'
     // Google's JSON library for easy (de)?serialization
     compile 'com.google.code.gson:gson:2.8.5'
     // Jetty

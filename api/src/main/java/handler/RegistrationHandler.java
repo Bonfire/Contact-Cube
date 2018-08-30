@@ -1,5 +1,6 @@
 package handler;
 
+import dao.UserDao;
 import model.User;
 import org.jdbi.v3.core.Jdbi;
 
@@ -17,6 +18,7 @@ public class RegistrationHandler extends AbstractHandler {
 
     public RegistrationHandler(final Jdbi dbi) {
         super(dbi);
+        dbi.useExtension(UserDao.class, UserDao::createTable);
     }
 
     /**
@@ -39,6 +41,10 @@ public class RegistrationHandler extends AbstractHandler {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
+
+        // insert the user into the database and get the userId
+        long id = dbi.withExtension(UserDao.class, dao -> dao.insert(user));
+        System.out.println("User " + user.name + " created with ID: " + id);
 
         // say that the request was a success
         resp.setStatus(HttpServletResponse.SC_OK);

@@ -1,10 +1,9 @@
-import com.google.gson.Gson;
 import com.zaxxer.hikari.HikariDataSource;
 import handler.RegistrationHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.skife.jdbi.v2.DBI;
+import org.jdbi.v3.core.Jdbi;
 
 /**
  * @author Matthew
@@ -15,7 +14,7 @@ public class ApiServer {
     private static final String DATABASE_PASSWORD = "somefuckingpassword?";
     private static final String DATABASE_NAME = "small_project";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         // create an instance of the Jetty server and tell it to listen on port 8080
         final Server server = new Server(8080);
@@ -24,11 +23,13 @@ public class ApiServer {
         final ApiServer api = new ApiServer();
         server.setHandler(api.handler);
 
+        // start the server
+        server.start();
+        server.join();
+
     }
 
     private final ServletHandler handler = new ServletHandler();
-
-    private final DBI dbi;
 
     ApiServer() {
 
@@ -41,7 +42,7 @@ public class ApiServer {
         ds.setPassword(DATABASE_PASSWORD);
 
         // create the access point for JDBI and set the data source
-        this.dbi = new DBI(ds);
+        final Jdbi dbi = Jdbi.create(ds);
 
         // register the handlers to their respective URLs
         handler.addServletWithMapping(new ServletHolder(new RegistrationHandler(dbi)), "/register");

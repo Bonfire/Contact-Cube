@@ -1,7 +1,7 @@
 package handler;
 
-import model.Registrant;
-import org.skife.jdbi.v2.DBI;
+import model.User;
+import org.jdbi.v3.core.Jdbi;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -13,10 +13,11 @@ import java.io.IOException;
  */
 public class RegistrationHandler extends AbstractHandler {
 
-    public RegistrationHandler(final DBI dbi) {
+    private static final String SQL_LOOKUP_USER = "select id,name,password from users where name = ?";
+
+    public RegistrationHandler(final Jdbi dbi) {
         super(dbi);
     }
-
 
     /**
      * Handle POST requests to the registration handler
@@ -30,22 +31,20 @@ public class RegistrationHandler extends AbstractHandler {
 
         // get the IP that the request came from
         final String ip = this.getIpAddress(req);
-        System.out.println("POST request received from: " + ip);
 
-        // deserialize the JSON to a registrant
-        final Registrant registrant = gson.fromJson(req.getReader(), Registrant.class);
-        if (registrant == null) {
+        // deserialize the JSON to a user
+        final User user = gson.fromJson(req.getReader(), User.class);
+        if (user == null) {
             // there was an issue with the JSON payload, display error
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
-        // quick debugging
-        System.out.println("Received a registration request from: " + ip + " for the username \"" +
-                registrant.name + "\" with the password hash \"" + registrant.password + "\"");
-
         // say that the request was a success
         resp.setStatus(HttpServletResponse.SC_OK);
 
     }
+
+
+
 }

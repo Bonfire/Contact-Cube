@@ -1,7 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
-import org.skife.jdbi.v2.DBI;
+import org.jdbi.v3.core.Jdbi;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -14,9 +14,9 @@ public abstract class AbstractHandler extends HttpServlet {
     // GSON singleton to be used by every handler for deserialization/serialization of JSON
     protected static final Gson gson = new Gson();
 
-    protected final DBI dbi;
+    protected final Jdbi dbi;
 
-    AbstractHandler(final DBI dbi) {
+    AbstractHandler(final Jdbi dbi) {
         this.dbi = dbi;
     }
 

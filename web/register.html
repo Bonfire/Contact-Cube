@@ -136,13 +136,13 @@
     </form>
   </nav>
 
-  <!-- Login Form -->
+  <!-- Register Form -->
   <form>
     <div class="row">
       <div class="container col-6 col-md-4 card p-3" style="margin-top: 5%;">
         <div style="text-align: center;"><h4>Register Here</h4></div>
         <hr>
-        <form class="container was-validated" novalidate="">
+        <form class="container was-validated" novalidate>
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="inputFirstName">First Name</label>
@@ -153,22 +153,31 @@
               <input type="text" class="form-control" id="inputLastName" placeholder="Smith" required>
             </div>
           </div>
+          
           <div class="form-group">
             <label for="inputEmail">Email</label>
             <input type="email" class="form-control" id="inputEmail" placeholder="name@email.com" required>
+            <div class="invalid-feedback">Please provide a valid email.</div>
           </div>
           <div class="form-group">
             <label for="inputConfirmEmail">Confirm Email</label>
             <input type="text" class="form-control" id="inputConfirmEmail" placeholder="name@email.com" required>
+            <small id="confirmEmailRequirement" class="form-text text-muted">Emails must match.</small>
+            <div class="invalid-feedback">Emails do not match.</div>
+
           </div>
           <div class="form-group">
             <label for="inputPassword">Password</label>
             <input type="password" class="form-control" id="inputPassword" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
-            <small id="passwordRequirement" class="form-text text-muted">Minimum length is 8 characters.</small>
+            <small id="passwordRequirement" class="form-text text-muted">Your password must be at least 8 characters long, contain uppercase and lowercase letters, and numbers.</small>
+            <div class="invalid-feedback">Password does not meet requirements.</div>
           </div>
           <div class="form-group">
             <label for="inputConfirmPassword">Confirm Password</label>
             <input type="password" class="form-control" id="inputConfirmPassword" required>
+            <small id="confirmPassRequirement" class="form-text text-muted">Passwords must match.</small>
+            <div class="invalid-feedback">Password does not match.</div>
+
           </div>
 
           <button type="submit" class="btn btn-primary" id="register" disabled=true>Register</button>

@@ -20,4 +20,7 @@ dependencies {
     compile 'org.jdbi:jdbi:2.78'
     // Google's JSON library for easy (de)?serialization
     compile 'com.google.code.gson:gson:2.8.5'
+    // Jetty
+    compile 'org.eclipse.jetty:jetty-server:9.4.12.RC2'
+    compile 'org.eclipse.jetty:jetty-servlet:9.4.12.RC2'
 }

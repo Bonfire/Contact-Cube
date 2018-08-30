@@ -1,6 +1,8 @@
 package model;
 
 /**
+ * Used for JSON serialization/deserialization
+ *
  * @author Matthew
  */
 public class Registrant {

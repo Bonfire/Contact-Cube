@@ -7,8 +7,6 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import smallproject.model.User;
 
-import java.util.List;
-
 /**
  * @author Matthew
  */
@@ -21,7 +19,7 @@ public interface UserDao {
                     "email VARCHAR(255) NOT NULL," +
                     "password VARCHAR(255) NOT NULL," +
                     "firstname VARCHAR(255) NOT NULL," +
-                    "lastname VARCHAT(255) NOT NULL" +
+                    "lastname VARCHAR(255) NOT NULL" +
                     ")"
     )
     void createTable();

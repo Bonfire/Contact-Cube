@@ -30,7 +30,7 @@ public interface UserDao {
      * @param user the user to insert into the database
      * @return the created ID (auto-increment) of the user
      */
-    @SqlUpdate("INSERT INTO users (email, password) values (:email, :password)")
+    @SqlUpdate("INSERT INTO users (email, password, firstname, lastname) values (:email, :password, :firstname, :lastname)")
     @GetGeneratedKeys("id")
     long insert(@BindFields final User user);
 

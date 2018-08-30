@@ -1,8 +1,12 @@
-package handler;
+package smallproject.handler;
 
-import dao.UserDao;
-import model.User;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.extension.ExtensionFactory;
+import smallproject.dao.UserDao;
+import smallproject.model.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -35,16 +39,24 @@ public class RegistrationHandler extends AbstractHandler {
         final String ip = this.getIpAddress(req);
 
         // deserialize the JSON to a user
-        final User user = gson.fromJson(req.getReader(), User.class);
-        if (user == null) {
-            // there was an issue with the JSON payload, display error
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return;
+
+        try {
+            final User user = gson.fromJson(req.getReader(), User.class);
+            if (user == null) {
+                System.out.println("Unable to parse user.");
+                // there was an issue with the JSON payload, display error
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                return;
+            }
+
+            // insert the user into the database and get the userId
+            long id = dbi.withExtension(UserDao.class, dao -> dao.insert(user));
+            System.out.println("User " + user.name + " created with ID: " + id);
+
+        } catch (final Exception ignored) {
+            ignored.printStackTrace();
         }
 
-        // insert the user into the database and get the userId
-        long id = dbi.withExtension(UserDao.class, dao -> dao.insert(user));
-        System.out.println("User " + user.name + " created with ID: " + id);
 
         // say that the request was a success
         resp.setStatus(HttpServletResponse.SC_OK);

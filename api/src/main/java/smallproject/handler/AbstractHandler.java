@@ -1,4 +1,4 @@
-package handler;
+package smallproject.handler;
 
 import com.google.gson.Gson;
 import org.jdbi.v3.core.Jdbi;
@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class AbstractHandler extends HttpServlet {
 
     // GSON singleton to be used by every handler for deserialization/serialization of JSON
-    protected static final Gson gson = new Gson();
+    static final Gson gson = new Gson();
 
     protected final Jdbi dbi;
 

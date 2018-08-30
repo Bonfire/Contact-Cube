@@ -1,9 +1,14 @@
+package smallproject;
+
 import com.zaxxer.hikari.HikariDataSource;
-import handler.RegistrationHandler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.extension.Extensions;
+import org.jdbi.v3.sqlobject.SqlObjectFactory;
+import org.jdbi.v3.sqlobject.SqlObjectPlugin;
+import smallproject.handler.RegistrationHandler;
 
 /**
  * @author Matthew
@@ -43,6 +48,7 @@ public class ApiServer {
 
         // create the access point for JDBI and set the data source
         final Jdbi dbi = Jdbi.create(ds);
+        dbi.installPlugin(new SqlObjectPlugin());
 
         // register the handlers to their respective URLs
         handler.addServletWithMapping(new ServletHolder(new RegistrationHandler(dbi)), "/register");

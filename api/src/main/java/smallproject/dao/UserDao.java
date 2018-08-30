@@ -1,8 +1,13 @@
-package dao;
+package smallproject.dao;
 
-import model.User;
+import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.customizer.BindFields;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
+import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
+import smallproject.model.User;
+
+import java.util.List;
 
 /**
  * @author Matthew
@@ -27,7 +32,15 @@ public interface UserDao {
      */
     @SqlUpdate("INSERT INTO users (name, password) values (:name, :password)")
     @GetGeneratedKeys("id")
-    long insert(User user);
+    long insert(@BindFields final User user);
+
+    @SqlQuery("SELECT * FROM users WHERE name = ?")
+    @RegisterBeanMapper(User.class)
+    List<User> getUsersByName(final String name);
+
+    @SqlQuery("SELECT * FROM users WHERE name = ?")
+    @RegisterBeanMapper(User.class)
+    User getUserByName(final String name);
 
 }
 

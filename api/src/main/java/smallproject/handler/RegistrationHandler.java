@@ -36,42 +36,44 @@ public class RegistrationHandler extends AbstractHandler {
         // get the IP that the request came from
         final String ip = this.getIpAddress(req);
 
-        // json object used for the response
-        final JsonObject payload = new JsonObject();
-
         // deserialize the JSON to a user
         final User user = gson.fromJson(req.getReader(), User.class);
-        if (user == null) {
+        if (user == null || user.email == null || user.firstname == null || user.lastname == null) {
             // there was an issue with the JSON payload, display error
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            payload.addProperty("status", "error");
-            payload.addProperty("message", ERROR_DESERIALIZE_FAIL);
-            response.getWriter().write(payload.toString());
-            response.getWriter().flush();
-            response.getWriter().close();
+            error(response, ERROR_DESERIALIZE_FAIL);
             return;
         }
 
+        // open connection to the database
         try (final Handle h = dbi.open()) {
+            // attach the handle to the userdao
             UserDao dao = h.attach(UserDao.class);
+            // look up the email in the database
             final User registeredUser = dao.getUserByEmail(user.email);
             if (registeredUser != null && registeredUser.id != -1) {
-                payload.addProperty("status", "error");
-                payload.addProperty("message", "user already exists!");
+                // email exists in the database, return an error
+                error(response, "user already exists!");
             } else {
                 // insert the user into the database and get the userId
                 long id = dao.insert(user);
-                payload.addProperty("status", "success");
+                // json object used for the response
+                final JsonObject payload = new JsonObject();
+                // add the userid to the payload
                 payload.addProperty("userId", id);
+                // send success response with the payload
+                ok(response, payload);
             }
         }
 
-        // say that the request was a success
-        ok(response, payload);
-
     }
 
-    protected void ok(final HttpServletResponse response, final JsonObject payload) throws IOException {
+    private void error(final HttpServletResponse response, final String message) throws IOException {
+        final JsonObject payload = new JsonObject();
+        payload.addProperty("error", message);
+        respond(response, HttpServletResponse.SC_BAD_REQUEST, payload);
+    }
+
+    private void ok(final HttpServletResponse response, final JsonObject payload) throws IOException {
         respond(response, HttpServletResponse.SC_OK, payload);
     }
 

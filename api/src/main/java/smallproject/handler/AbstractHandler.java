@@ -5,6 +5,7 @@ import org.jdbi.v3.core.Jdbi;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import java.util.logging.Logger;
 
 /**
  * @author Matthew
@@ -13,6 +14,8 @@ public abstract class AbstractHandler extends HttpServlet {
 
     // GSON singleton to be used by every handler for deserialization/serialization of JSON
     static final Gson gson = new Gson();
+
+    protected static final Logger log = Logger.getGlobal();
 
     protected final Jdbi dbi;
 

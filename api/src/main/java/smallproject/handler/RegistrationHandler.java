@@ -38,8 +38,8 @@ public class RegistrationHandler extends AbstractHandler {
 
         // deserialize the JSON to a user
         final User user = gson.fromJson(req.getReader(), User.class);
-        System.out.println("User: " + user);
         if (user == null || user.email == null || user.firstname == null || user.lastname == null) {
+            log.warning("Registration failed for user: " + user);
             // there was an issue with the JSON payload, display error
             error(response, ERROR_DESERIALIZE_FAIL);
             return;
@@ -51,19 +51,18 @@ public class RegistrationHandler extends AbstractHandler {
             UserDao dao = h.attach(UserDao.class);
             // look up the email in the database
             final User registeredUser = dao.getUserByEmail(user.email);
-            System.out.println("Registered user: " + registeredUser);
             if (registeredUser != null && registeredUser.id != -1) {
+                log.warning("Registration failed for user: \"" + user.email + "\", user already exists!");
                 // email exists in the database, return an error
                 error(response, "user already exists!");
             } else {
                 // insert the user into the database and get the userId
                 long id = dao.insert(user);
-                System.out.println(id);
+                log.info("Registration successful for user \"" + user.email + "\", userId: " + id);
                 // json object used for the response
                 final JsonObject payload = new JsonObject();
                 // add the userid to the payload
                 payload.addProperty("userId", id);
-                System.out.println("Submitting: " + payload);
                 // send success response with the payload
                 ok(response, payload);
             }

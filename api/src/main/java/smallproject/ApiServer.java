@@ -5,10 +5,13 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.extension.Extensions;
-import org.jdbi.v3.sqlobject.SqlObjectFactory;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import smallproject.handler.RegistrationHandler;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 /**
  * @author Matthew
@@ -18,6 +21,42 @@ public class ApiServer {
     private static final String DATABASE_USERNAME = "root";
     private static final String DATABASE_PASSWORD = "somefuckingpassword?";
     private static final String DATABASE_NAME = "small_project";
+    private final ServletHandler handler = new ServletHandler();
+    private static Logger log = null;
+
+    static {
+        InputStream stream = ApiServer.class.getClassLoader().
+                getResourceAsStream("logging.properties");
+        try {
+            LogManager.getLogManager().readConfiguration(stream);
+            log = Logger.getLogger(ApiServer.class.getName());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    ApiServer() {
+
+        log.info("Starting API Server...");
+
+        // set the data source and create the connection
+        final HikariDataSource ds = new HikariDataSource();
+        ds.setJdbcUrl("jdbc:mysql://localhost:3306/" + DATABASE_NAME);
+        ds.setUsername(DATABASE_USERNAME);
+        ds.setPassword(DATABASE_PASSWORD);
+
+        // create the access point for JDBI and set the data source
+        final Jdbi dbi = Jdbi.create(ds);
+        log.info("Successfully connected to database");
+        dbi.installPlugin(new SqlObjectPlugin());
+
+        // register the handlers to their respective URLs
+        handler.addServletWithMapping(new ServletHolder(new RegistrationHandler(dbi)), "/register");
+        log.info("Created mapping for Registration Handler");
+
+
+    }
 
     public static void main(String[] args) throws Exception {
 
@@ -30,29 +69,10 @@ public class ApiServer {
 
         // start the server
         server.start();
+        log.info("Server is now listening on port: 8080");
         server.join();
 
     }
 
-    private final ServletHandler handler = new ServletHandler();
-
-    ApiServer() {
-
-        // create a gson singleton to be used throughout the handlers
-
-        // set the data source and create the connection
-        final HikariDataSource ds = new HikariDataSource();
-        ds.setJdbcUrl("jdbc:mysql://localhost:3306/" + DATABASE_NAME);
-        ds.setUsername(DATABASE_USERNAME);
-        ds.setPassword(DATABASE_PASSWORD);
-
-        // create the access point for JDBI and set the data source
-        final Jdbi dbi = Jdbi.create(ds);
-        dbi.installPlugin(new SqlObjectPlugin());
-
-        // register the handlers to their respective URLs
-        handler.addServletWithMapping(new ServletHolder(new RegistrationHandler(dbi)), "/register");
-
-    }
 
 }

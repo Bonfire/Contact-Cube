@@ -24,6 +24,9 @@ public interface UserDao {
     )
     void createTable();
 
+    @SqlUpdate("TRUNCATE users")
+    void truncateTable();
+
     /**
      * Inserts the user into the database
      *

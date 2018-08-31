@@ -6,6 +6,7 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
+import smallproject.handler.AdminHandler;
 import smallproject.handler.RegistrationHandler;
 
 import java.io.IOException;
@@ -54,6 +55,10 @@ public class ApiServer {
         // register the handlers to their respective URLs
         handler.addServletWithMapping(new ServletHolder(new RegistrationHandler(dbi)), "/register");
         log.info("Created mapping for Registration Handler");
+
+        // just for misc. admin commands
+        handler.addServletWithMapping(new ServletHolder(new AdminHandler(dbi)), "/admin");
+        log.info("Created mapping for Admin Handler");
 
 
     }

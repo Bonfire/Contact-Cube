@@ -25,3 +25,13 @@ dependencies {
     compile 'org.eclipse.jetty:jetty-server:9.4.12.RC2'
     compile 'org.eclipse.jetty:jetty-servlet:9.4.12.RC2'
 }
+
+jar {
+    manifest {
+        attributes "Main-Class": "smallproject.ApiServer"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

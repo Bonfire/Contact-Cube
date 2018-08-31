@@ -6,13 +6,13 @@
 
   <title>Contact Manager - Register</title>
 
-  <!-- Bootstrap CSS/JS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  
+
+  <!-- Bootstrap CSS/JS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
   <script type="application/javascript">
     // Handle display of email error message.
     function checkEmail()
@@ -136,39 +136,56 @@
     </form>
   </nav>
 
-  <!-- Login Form -->
+  <!-- Error/Alert -->
+  <div class="alert alert-danger alert-dismissible collapse" role="alert" id="userExistsAlert" style="z-index: 1">
+    User is already registered! <a href="login.html" class="alert-link">Click here to login</a>
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <!-- Register Form -->
   <form>
     <div class="row">
       <div class="container col-6 col-md-4 card p-3" style="margin-top: 5%;">
-        <center>
-          <h4><b>Register Here</b></h4></center>
+        <div style="text-align: center;"><h4>Register Here</h4></div>
         <hr>
-        <form class="container was-validated" novalidate="">
+        <form class="container was-validated" novalidate>
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="inputFirstName">First Name</label>
-              <input type="text" class="form-control" id="inputFirstName" placeholder="First Name" required>
+              <input type="text" class="form-control" id="inputFirstName" placeholder="John" required>
             </div>
             <div class="form-group col-md-6">
               <label for="inputLastName">Last Name</label>
-              <input type="text" class="form-control" id="inputLastName" placeholder="Last Name" required>
+              <input type="text" class="form-control" id="inputLastName" placeholder="Smith" required>
             </div>
           </div>
+
           <div class="form-group">
             <label for="inputEmail">Email</label>
-            <input type="email" class="form-control" id="inputEmail" placeholder="Email" required>
+            <input type="email" class="form-control" id="inputEmail" placeholder="name@email.com" required>
+            <div class="invalid-feedback">Please provide a valid email.</div>
           </div>
           <div class="form-group">
             <label for="inputConfirmEmail">Confirm Email</label>
-            <input type="text" class="form-control" id="inputConfirmEmail" placeholder="Confirm Email" required>
+            <input type="text" class="form-control" id="inputConfirmEmail" placeholder="name@email.com" required>
+            <small id="confirmEmailRequirement" class="form-text text-muted">Emails must match.</small>
+            <div class="invalid-feedback">Emails do not match.</div>
+
           </div>
           <div class="form-group">
             <label for="inputPassword">Password</label>
-            <input type="password" class="form-control" id="inputPassword" placeholder="Password" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+            <input type="password" class="form-control" id="inputPassword" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+            <small id="passwordRequirement" class="form-text text-muted">Your password must be at least 8 characters long, contain uppercase and lowercase letters, and numbers.</small>
+            <div class="invalid-feedback">Password does not meet requirements.</div>
           </div>
           <div class="form-group">
             <label for="inputConfirmPassword">Confirm Password</label>
-            <input type="password" class="form-control" id="inputConfirmPassword" placeholder="Confirm Password" required>
+            <input type="password" class="form-control" id="inputConfirmPassword" required>
+            <small id="confirmPassRequirement" class="form-text text-muted">Passwords must match.</small>
+            <div class="invalid-feedback">Password does not match.</div>
+
           </div>
 
           <button type="submit" class="btn btn-primary" id="register" disabled=true>Register</button>

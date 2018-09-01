@@ -68,11 +68,11 @@
         <hr>
         <div class="form-group">
           <label for="inputEmail">Email</label>
-          <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="name@email.com">
+          <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="name@email.com" required>
         </div>
         <div class="form-group">
           <label for="inputPassword">Password</label>
-          <input type="password" class="form-control" id="inputPassword">
+          <input type="password" class="form-control" id="inputPassword" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
         </div>
         <button type="submit" class="btn btn-primary">Sign In</button>
         <label class="form-check-label">

@@ -21,8 +21,10 @@
       {
         e.preventDefault();
         
+        // Hash password with SHA-256
         var hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash($("#inputPassword").val()));
         
+        // Authenticate user
         $.ajax(
         {
           type: "POST",

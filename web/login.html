@@ -28,22 +28,19 @@
         $.ajax(
         {
           type: "POST",
-          url: "login.json",
+          url: "login",
           data: {username:$("#inputEmail").val(), password:hash},
           dataType: "json",
-          success: function (response)
+          success: function (data, textStatus, jqXHR)
           {
-            if (response === "invalid_email")
+            if (data.token !== null)
             {
-              $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>Invalid email address submitted</p>");  
+              document.cookie = data;
+              window.location.href = "dashboard.html";
             }
-            else if (response === "invalid_password")
+            else if (data.error !== null)
             {
-              $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>Invalid password submitted</p>"); 
-            }
-            else
-            {
-              window.location.href = resp;
+              $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>" + data.error + "</p>");  
             }
           }
         });

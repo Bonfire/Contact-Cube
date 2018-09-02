@@ -217,22 +217,16 @@
           <div class="form-group">
             <label for="inputConfirmEmail">Confirm Email</label>
             <input type="text" class="form-control" id="inputConfirmEmail" placeholder="name@email.com" required>
-            <small id="confirmEmailRequirement" class="form-text text-muted">Emails must match.</small>
-            <div class="invalid-feedback">Emails do not match.</div>
 
           </div>
           <div class="form-group">
             <label for="inputPassword">Password</label>
             <input type="password" class="form-control" id="inputPassword" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
             <small id="passwordRequirement" class="form-text text-muted">Your password must be at least 8 characters long, contain uppercase letters, lowercase letters, and numbers.</small>
-            <div class="invalid-feedback">Password does not meet requirements.</div>
           </div>
           <div class="form-group">
             <label for="inputConfirmPassword">Confirm Password</label>
             <input type="password" class="form-control" id="inputConfirmPassword" required>
-            <small id="confirmPassRequirement" class="form-text text-muted">Passwords must match.</small>
-            <div class="invalid-feedback">Password does not match.</div>
-
           </div>
 
           <button type="submit" class="btn btn-primary" id="register" disabled=true>Register</button>

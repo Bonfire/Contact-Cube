@@ -78,32 +78,35 @@
     
     // Since help messages and field confirmation aren't built into HTML5,
     // they have to be implemented.
-    $(document).on("focusout", "#inputEmail", validateEmail);
-    
-    $(document).on("keyup", "#inputEmail", confirmEmail);
-    $(document).on("keyup", "#inputConfirmEmail", confirmEmail);
-    
-    $(document).on("keyup", "#inputPassword", confirmPassword);
-    $(document).on("keyup", "#inputConfirmPassword", confirmPassword);
-    
-    // Enables registration when all forms are valid.  On 'keyup' for responsiveness.
-    $(document).keyup(function ()
+    $(document).ready(function ()
     {
-      var inputFirstNameFieldValid = document.getElementById("inputFirstName").checkValidity();
-      var inputLastNameFieldValid = document.getElementById("inputLastName").checkValidity();
-      var inputEmailFieldValid = document.getElementById("inputEmail").checkValidity();
-      var inputEmailConfirmFieldValid = document.getElementById("inputConfirmEmail").checkValidity();
-      var inputPasswordFieldValid = document.getElementById("inputPassword").checkValidity();
-      var inputPasswordConfirmFieldValid = document.getElementById("inputConfirmPassword").checkValidity();
+      $(document).on("focusout", "#inputEmail", validateEmail);
       
-      if (inputFirstNameFieldValid && inputLastNameFieldValid && inputEmailFieldValid && inputEmailConfirmFieldValid && inputPasswordFieldValid && inputPasswordConfirmFieldValid)
+      $(document).on("keyup", "#inputEmail", confirmEmail);
+      $(document).on("keyup", "#inputConfirmEmail", confirmEmail);
+      
+      $(document).on("keyup", "#inputPassword", confirmPassword);
+      $(document).on("keyup", "#inputConfirmPassword", confirmPassword);
+      
+      // Enables registration when all forms are valid.  On 'keyup' for responsiveness.
+      $(document).keyup(function ()
       {
-        $('#register').prop('disabled', false);
-      }
-      else
-      {
-        $('#register').prop('disabled', true);
-      }
+        var inputFirstNameFieldValid = document.getElementById("inputFirstName").checkValidity();
+        var inputLastNameFieldValid = document.getElementById("inputLastName").checkValidity();
+        var inputEmailFieldValid = document.getElementById("inputEmail").checkValidity();
+        var inputEmailConfirmFieldValid = document.getElementById("inputConfirmEmail").checkValidity();
+        var inputPasswordFieldValid = document.getElementById("inputPassword").checkValidity();
+        var inputPasswordConfirmFieldValid = document.getElementById("inputConfirmPassword").checkValidity();
+        
+        if (inputFirstNameFieldValid && inputLastNameFieldValid && inputEmailFieldValid && inputEmailConfirmFieldValid && inputPasswordFieldValid && inputPasswordConfirmFieldValid)
+        {
+          $('#register').prop('disabled', false);
+        }
+        else
+        {
+          $('#register').prop('disabled', true);
+        }
+      });
     });
   </script>
 </head>

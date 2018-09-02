@@ -25,14 +25,18 @@
         $.ajax(
         {
           type: "POST",
-          url: "register.json",
-          data: inputField.value,
+          url: "register",
+          data: {email:inputField.value},
           dataType: "json",
-          success: function (response)
+          success: function (data, textStatus, jqXHR)
           {
-            if (response === "invalid_email")
+            if (data.error !== null)
             {
               $("#userExistsAlert").show();
+            }
+            else
+            {
+              $("#userExistsAlert").hide();
             }
           }
         });
@@ -129,20 +133,21 @@
           $.ajax(
           {
             type: "POST",
-            url: "registration.json",
+            url: "http://142.93.253.171:8080/register",
             data: {firstname:inputFirstNameFieldValue, lastname:inputLastNameFieldValue, email:inputEmailFieldValue, password:hash},
             dataType: "json",
-            success: function (response)
+            success: function (data, textStatus, jqXHR)
             {
-              /*if (false)
+              if (data.token !== null)
               {
-                console.log("SERVER ERROR: " + response)
+                document.cookie = data;
+                window.location.href = "login.html";
               }
-              else
+              else if (data.error !== null)
               {
-                window.location.href = response;
-              }*/
-            }
+                location.reload(true);
+              }
+            },
           });
         }
       });

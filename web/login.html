@@ -15,7 +15,8 @@
   <script src="https://bitwiseshiftleft.github.io/sjcl/sjcl.js" integrity="sha384-zJXJqc5ftX51ojskUi8aWFg0yrz9P61p6Wyg8n0cyFYsgWiAYtxnVWzh8d8BLcw0" crossorigin="anonymous"></script>
 
   <script type="application/javascript">
-    if (document.cookie.token !== null)
+    // Automatic login
+    if (typeof document.cookie.token !== "undefined")
     {
       window.location.href = "dashboard.html";
     }
@@ -40,19 +41,20 @@
           {
             $("#connectionFailedAlert").hide();
           
-            if (data.token !== null)
+            if (typeof data.token !== "undefined")
             {
               document.cookie = data;
               window.location.href = "dashboard.html";
             }
-            else if (data.error !== null)
+            else if (typeof data.error !== "undefined")
             {
+              console.log("SERVER ERROR: " + data.error);
               $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>" + data.error + "</p>");  
             }
-          }
+          },
           error: function (jqXHR, textStatus, errorThrown)
           {
-            console.log(textStatus + ": " + errorThrown);
+            console.log("Could not reach server.");
             $("#connectionFailedAlert").show();
           }
         });

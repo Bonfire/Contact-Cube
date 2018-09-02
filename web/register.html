@@ -32,18 +32,19 @@
           {
             $("#connectionFailedAlert").hide();
           
-            if (data.error !== null)
+            if (typeof data.error !== "undefined")
             {
+              console.log("SERVER ERROR: " + data.error);
               $("#userExistsAlert").show();
             }
             else
             {
               $("#userExistsAlert").hide();
             }
-          }
+          },
           error: function (jqXHR, textStatus, errorThrown)
           {
-            console.log(textStatus + ": " + errorThrown);
+            console.log("Could not reach server.");
             $("#connectionFailedAlert").show();
           }
         });
@@ -147,19 +148,20 @@
             {
               $("#connectionFailedAlert").hide();
               
-              if (data.token !== null)
+              if (typeof data.token !== "undefined")
               {
                 document.cookie = data;
                 window.location.href = "login.html";
               }
-              else if (data.error !== null)
+              else if (typeof data.error !== "undefined")
               {
+                console.log("SERVER ERROR: " + data.error);
                 location.reload(true);
               }
             },
             error: function (jqXHR, textStatus, errorThrown)
             {
-              console.log(textStatus + ": " + errorThrown);
+              console.log("Could not reach server.");
               $("#connectionFailedAlert").show();
             }
           });

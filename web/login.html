@@ -33,6 +33,8 @@
           dataType: "json",
           success: function (data, textStatus, jqXHR)
           {
+            $("#connectionFailedAlert").hide();
+          
             if (data.token !== null)
             {
               document.cookie = data;
@@ -42,6 +44,11 @@
             {
               $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>" + data.error + "</p>");  
             }
+          }
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            console.log(textStatus + ": " + errorThrown);
+            $("#connectionFailedAlert").show();
           }
         });
       });

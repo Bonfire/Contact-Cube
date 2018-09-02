@@ -31,7 +31,7 @@
           {
             if (response === "invalid_email")
             {
-              $("#userExistsAlert").show(); 
+              $("#userExistsAlert").show();
             }
           }
         });
@@ -107,6 +107,41 @@
           $('#register').prop('disabled', true);
         }
       });
+      
+      $("#registration_form").submit(function (e)
+      {
+        validateEmail()
+        
+        if ($("#userExistsAlert").is(':hidden'))
+        {
+          e.preventDefault();
+          
+          var inputFirstNameFieldValue = document.getElementById("inputFirstName").value;
+          var inputLastNameFieldValue = document.getElementById("inputLastName").value;
+          var inputEmailFieldValue = document.getElementById("inputEmail").value;
+          var inputPasswordFieldValue = document.getElementById("inputPassword").value;
+          
+          // Send registration information to the server.
+          $.ajax(
+          {
+            type: "POST",
+            url: "registration.json",
+            data: {firstname:inputFirstNameFieldValue, lastname:inputLastNameFieldValue, email:inputEmailFieldValue, password:inputPasswordFieldValue},
+            dataType: "json",
+            success: function (response)
+            {
+              /*if (false)
+              {
+                console.log("SERVER ERROR: " + response)
+              }
+              else
+              {
+                window.location.href = response;
+              }*/
+            }
+          });
+        }
+      });
     });
   </script>
 </head>
@@ -134,7 +169,7 @@
   </div>
 
   <!-- Register Form -->
-  <form>
+  <form id="registration_form">
     <div class="row">
       <div class="container col-6 col-md-4 card p-3" style="margin-top: 5%;">
         <div style="text-align: center;"><h4>Register Here</h4></div>

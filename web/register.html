@@ -34,6 +34,7 @@
           
             if (typeof data.error !== "undefined")
             {
+              console.log("SERVER ERROR: " + data.error);
               $("#userExistsAlert").show();
             }
             else
@@ -43,7 +44,7 @@
           },
           error: function (jqXHR, textStatus, errorThrown)
           {
-            console.log(textStatus + ": " + errorThrown);
+            console.log("Could not reach server.");
             $("#connectionFailedAlert").show();
           }
         });
@@ -154,12 +155,13 @@
               }
               else if (typeof data.error !== "undefined")
               {
+                console.log("SERVER ERROR: " + data.error);
                 location.reload(true);
               }
             },
             error: function (jqXHR, textStatus, errorThrown)
             {
-              console.log(textStatus + ": " + errorThrown);
+              console.log("Could not reach server.");
               $("#connectionFailedAlert").show();
             }
           });

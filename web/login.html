@@ -34,11 +34,17 @@
           success: function (response)
           {
             if (response === "invalid_email")
+            {
               $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>Invalid email address submitted</p>");  
+            }
             else if (response === "invalid_password")
+            {
               $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>Invalid password submitted</p>"); 
+            }
             else
+            {
               window.location.href = resp;
+            }
           }
         });
       });

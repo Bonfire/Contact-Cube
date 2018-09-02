@@ -30,6 +30,8 @@
           dataType: "json",
           success: function (data, textStatus, jqXHR)
           {
+            $("#connectionFailedAlert").hide();
+          
             if (data.error !== null)
             {
               $("#userExistsAlert").show();
@@ -38,6 +40,11 @@
             {
               $("#userExistsAlert").hide();
             }
+          }
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            console.log(textStatus + ": " + errorThrown);
+            $("#connectionFailedAlert").show();
           }
         });
       }
@@ -138,6 +145,8 @@
             dataType: "json",
             success: function (data, textStatus, jqXHR)
             {
+              $("#connectionFailedAlert").hide();
+              
               if (data.token !== null)
               {
                 document.cookie = data;
@@ -148,6 +157,11 @@
                 location.reload(true);
               }
             },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+              console.log(textStatus + ": " + errorThrown);
+              $("#connectionFailedAlert").show();
+            }
           });
         }
       });

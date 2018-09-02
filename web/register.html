@@ -32,7 +32,7 @@
           {
             $("#connectionFailedAlert").hide();
           
-            if (data.error !== null)
+            if (typeof data.error !== "undefined")
             {
               $("#userExistsAlert").show();
             }
@@ -147,12 +147,12 @@
             {
               $("#connectionFailedAlert").hide();
               
-              if (data.token !== null)
+              if (typeof data.token !== "undefined")
               {
                 document.cookie = data;
                 window.location.href = "login.html";
               }
-              else if (data.error !== null)
+              else if (typeof data.error !== "undefined")
               {
                 location.reload(true);
               }

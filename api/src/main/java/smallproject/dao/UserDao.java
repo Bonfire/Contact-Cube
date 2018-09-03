@@ -7,6 +7,8 @@ import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import smallproject.model.User;
 
+import java.util.List;
+
 /**
  * @author Matthew
  */
@@ -24,8 +26,15 @@ public interface UserDao {
     )
     void createTable();
 
-    @SqlUpdate("TRUNCATE users")
+    @SqlUpdate("TRUNCATE TABLE users")
     void truncateTable();
+
+    @SqlQuery("SELECT count(*) FROM users")
+    int userCount();
+
+    @SqlQuery("SELECT * from users")
+    @RegisterBeanMapper(User.class)
+    List<User> allUsers();
 
     /**
      * Inserts the user into the database

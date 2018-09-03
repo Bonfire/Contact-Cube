@@ -1,5 +1,6 @@
 package smallproject.handler;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
@@ -10,6 +11,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Matthew
@@ -28,10 +30,35 @@ public class AdminHandler extends AbstractHandler {
             return;
         }
 
-        if (action.equals("truncate_users"))
+        final JsonObject obj = new JsonObject();
+
+        if (action.equals("truncate_users")) {
             dbi.useExtension(UserDao.class, UserDao::truncateTable);
+            obj.addProperty("status", "users truncated!");
+            log.info("Cleared user table");
+        } else if (action.equals("user_count")) {
+            long count = dbi.withExtension(UserDao.class, UserDao::userCount);
+            obj.addProperty("userCount", count);
+            log.info("User count: " + count);
+        } else if (action.equals("list_users")) {
+            final JsonArray array = new JsonArray();
+            long count = dbi.withExtension(UserDao.class, UserDao::userCount);
+            List<User> users = dbi.withExtension(UserDao.class, UserDao::allUsers);
+            users.forEach(user -> {
+                final JsonObject userObj = new JsonObject();
+                userObj.addProperty("email", user.email);
+                userObj.addProperty("firstname", user.firstname);
+                userObj.addProperty("lastname", user.lastname);
+                array.add(userObj);
+            });
+            obj.addProperty("userCount", count);
+            obj.add("users", array);
+        }
 
         resp.setStatus(HttpServletResponse.SC_OK);
+        resp.getWriter().write(obj.toString());
+        resp.getWriter().flush();
+
     }
 
     private void error(final HttpServletResponse response, final String message) throws IOException {

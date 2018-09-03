@@ -38,7 +38,7 @@ public class LoginHandler extends AbstractHandler {
         // get the IP that the request came from
         final String ip = this.getIpAddress(req);
 
-        final JsonElement element = new JsonParser().parse(req.getReader());
+        final JsonElement element = new JsonParser().parse(getPayload(req.getReader()));
         if (!element.isJsonObject()) {
             badRequest(response, "payload is not a valid JSON object!");
             return;

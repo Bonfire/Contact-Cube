@@ -1,7 +1,11 @@
 package smallproject.handler;
 
+import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import smallproject.dao.SessionDao;
@@ -12,7 +16,9 @@ import smallproject.model.User;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 /**
  * @author Matthew
@@ -39,11 +45,12 @@ public class RegistrationHandler extends AbstractHandler {
         // get the IP that the request came from
         final String ip = this.getIpAddress(req);
 
-        final User user = new Gson().fromJson(req.getReader(), User.class);
+        final User user = new Gson().fromJson(getPayload(req.getReader()), User.class);
         if (user == null || user.email == null || user.firstname == null || user.lastname == null) {
             log.warning("Registration failed for user: " + user);
             // there was an issue with the JSON payload, display error
             error(response, ERROR_DESERIALIZE_FAIL);
+            req.getReader().close();
             return;
         }
 
@@ -75,6 +82,7 @@ public class RegistrationHandler extends AbstractHandler {
             }
         }
 
+        req.getReader().close();
     }
 
     private void sendSession(HttpServletResponse response, Session session) throws IOException {

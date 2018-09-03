@@ -2,16 +2,65 @@
 <html lang="en">
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" charset="utf-8">
 
   <title>Contact Manager - Sign In</title>
 
   <!-- Bootstrap CSS/JS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  <script src="https://bitwiseshiftleft.github.io/sjcl/sjcl.js" integrity="sha384-zJXJqc5ftX51ojskUi8aWFg0yrz9P61p6Wyg8n0cyFYsgWiAYtxnVWzh8d8BLcw0" crossorigin="anonymous"></script>
+
+  <script type="application/javascript">
+    // Automatic login
+    if (typeof document.cookie.token !== "undefined")
+    {
+      window.location.href = "dashboard.html";
+    }
+  
+    $(document).ready(function ()
+    {
+      $("#login_form").submit(function (e)
+      {
+        e.preventDefault();
+        
+        // Hash password with SHA-256
+        var hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash($("#inputPassword").val()));
+        
+        // Authenticate user
+        $.ajax(
+        {
+          type: "POST",
+          url: "login",
+          data: {username:$("#inputEmail").val(), password:hash},
+          dataType: "json",
+          success: function (data, textStatus, jqXHR)
+          {
+            $("#connectionFailedAlert").hide();
+          
+            if (typeof data.token !== "undefined")
+            {
+              document.cookie = data;
+              window.location.href = "dashboard.html";
+            }
+            else if (typeof data.error !== "undefined")
+            {
+              console.log("SERVER ERROR: " + data.error);
+              $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>" + data.error + "</p>");  
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            console.log("Could not reach server.");
+            $("#connectionFailedAlert").show();
+          }
+        });
+      });
+    });
+  </script>
 </head>
 
 <body>
@@ -28,21 +77,29 @@
     </form>
   </nav>
 
+  <!-- Connection Failed Error/Alert -->
+  <div class="alert alert-danger collapse" role="alert" id="connectionFailedAlert" style="z-index: 1">
+    Unable to connect to server!
+  </div>
+
   <!-- Login Form -->
-  <form>
+  <form id="login_form">
     <div class="row">
       <div class="container col-6 col-md-4 card p-3" style="margin-top: 10%;">
         <span class="mx-auto"><h4>Please Sign In</h4></span>
         <hr>
         <div class="form-group">
           <label for="inputEmail">Email</label>
-          <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="name@email.com">
+          <input type="text" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="name@email.com" required pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
         </div>
         <div class="form-group">
           <label for="inputPassword">Password</label>
-          <input type="password" class="form-control" id="inputPassword">
+          <input type="password" class="form-control" id="inputPassword" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
         </div>
         <button type="submit" class="btn btn-primary">Sign In</button>
+        <label class="form-check-label">
+          <span class="text-danger align-middle" id="errorMsg"></span>
+        </label>
         <hr>
       </div>
     </div>

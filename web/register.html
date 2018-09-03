@@ -2,36 +2,55 @@
 <html lang="en">
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" charset="utf-8">
 
   <title>Contact Manager - Register</title>
 
-  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
+  <script src="https://bitwiseshiftleft.github.io/sjcl/sjcl.js" integrity="sha384-zJXJqc5ftX51ojskUi8aWFg0yrz9P61p6Wyg8n0cyFYsgWiAYtxnVWzh8d8BLcw0" crossorigin="anonymous"></script>
+  
   <!-- Bootstrap CSS/JS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
   <script type="application/javascript">
-    // Handle display of email error message.
-    function checkEmail()
+    // Ensure the registration email is not already in the database.
+    function validateEmail()
     {
-      var emailHelpText = {style:{display:"block"}}; // placeholder
-      //var emailHelpText = document.getElementById("emailHelpText");
-    
-      if (document.getElementById("inputEmail").checkValidity() && emailHelpText.style.display == "block")
+      var inputField = document.getElementById("inputEmail");
+      
+      if (inputField.checkValidity())
       {
-        emailHelpText.style.display = "none";
+        $.ajax(
+        {
+          type: "POST",
+          url: "register",
+          data: {email:inputField.value},
+          dataType: "json",
+          success: function (data, textStatus, jqXHR)
+          {
+            $("#connectionFailedAlert").hide();
+          
+            if (typeof data.error !== "undefined")
+            {
+              console.log("SERVER ERROR: " + data.error);
+              $("#userExistsAlert").show();
+            }
+            else
+            {
+              $("#userExistsAlert").hide();
+            }
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            console.log("Could not reach server.");
+            $("#connectionFailedAlert").show();
+          }
+        });
       }
-      else if (emailHelpText.style.display == "none")
-      {
-        emailHelpText.style.display = "block";
-      }
-    
-      confirmEmail();
     }
-    
+  
     // Ensure both emails are the same and valid.
     function confirmEmail()
     {
@@ -42,33 +61,13 @@
       {
         if (inputConfirmField.value !== "" && inputField.checkValidity() && !inputConfirmField.checkValidity())
         {
-          //document.getElementById("confirmEmailHelpText").style.display = "none";
           inputConfirmField.setCustomValidity("");
         }
       }
       else if (inputConfirmField.checkValidity())
       {
-        //document.getElementById("confirmEmailHelpText").style.display = "block";
         inputConfirmField.setCustomValidity("Invalid");
       }
-    }
-    
-    // Handle display of password error message.
-    function checkPassword()
-    {
-      var passwordHelpText = {style:{display:"block"}}; // placeholder
-      //var passwordHelpText = document.getElementById("passwordHelpText");
-    
-      if (document.getElementById("inputPassword").checkValidity() && passwordHelpText.style.display == "block")
-      {
-        passwordHelpText.style.display = "none";
-      }
-      else if (passwordHelpText.style.display == "none")
-      {
-        passwordHelpText.style.display = "block";
-      }
-    
-      confirmPassword();
     }
     
     // Ensure both passwords are the same and valid.
@@ -81,43 +80,93 @@
       {
         if (inputConfirmField.value !== "" && inputField.checkValidity() && !inputConfirmField.checkValidity())
         {
-          //document.getElementById("confirmPasswordHelpText").style.display = "none";
           inputConfirmField.setCustomValidity("");
         }
       }
       else if (inputConfirmField.checkValidity())
       {
-        //document.getElementById("confirmPasswordHelpText").style.display = "block";
         inputConfirmField.setCustomValidity("Invalid");
       }
     }
     
     // Since help messages and field confirmation aren't built into HTML5,
     // they have to be implemented.
-    $(document).on("keyup", "#inputEmail", checkEmail);
-    $(document).on("keyup", "#inputConfirmEmail", confirmEmail);
-    
-    $(document).on("keyup", "#inputPassword", checkPassword);
-    $(document).on("keyup", "#inputConfirmPassword", confirmPassword);
-    
-    // Enables registration when all forms are valid.  On 'keyup' for responsiveness.
-    $(document).keyup(function ()
+    $(document).ready(function ()
     {
-      var inputFirstNameFieldValid = document.getElementById("inputFirstName").checkValidity();
-      var inputLastNameFieldValid = document.getElementById("inputLastName").checkValidity();
-      var inputEmailFieldValid = document.getElementById("inputEmail").checkValidity();
-      var inputEmailConfirmFieldValid = document.getElementById("inputConfirmEmail").checkValidity();
-      var inputPasswordFieldValid = document.getElementById("inputPassword").checkValidity();
-      var inputPasswordConfirmFieldValid = document.getElementById("inputConfirmPassword").checkValidity();
+      $(document).on("focusout", "#inputEmail", validateEmail);
       
-      if (inputFirstNameFieldValid && inputLastNameFieldValid && inputEmailFieldValid && inputEmailConfirmFieldValid && inputPasswordFieldValid && inputPasswordConfirmFieldValid)
+      $(document).on("keyup", "#inputEmail", confirmEmail);
+      $(document).on("keyup", "#inputConfirmEmail", confirmEmail);
+      
+      $(document).on("keyup", "#inputPassword", confirmPassword);
+      $(document).on("keyup", "#inputConfirmPassword", confirmPassword);
+      
+      // Enables registration when all forms are valid.  On 'keyup' for responsiveness.
+      $(document).keyup(function ()
       {
-        $('#register').prop('disabled', false);
-      }
-      else
+        var inputFirstNameFieldValid = document.getElementById("inputFirstName").checkValidity();
+        var inputLastNameFieldValid = document.getElementById("inputLastName").checkValidity();
+        var inputEmailFieldValid = document.getElementById("inputEmail").checkValidity();
+        var inputEmailConfirmFieldValid = document.getElementById("inputConfirmEmail").checkValidity();
+        var inputPasswordFieldValid = document.getElementById("inputPassword").checkValidity();
+        var inputPasswordConfirmFieldValid = document.getElementById("inputConfirmPassword").checkValidity();
+        
+        if (inputFirstNameFieldValid && inputLastNameFieldValid && inputEmailFieldValid && inputEmailConfirmFieldValid && inputPasswordFieldValid && inputPasswordConfirmFieldValid)
+        {
+          $('#register').prop('disabled', false);
+        }
+        else
+        {
+          $('#register').prop('disabled', true);
+        }
+      });
+      
+      $("#registration_form").submit(function (e)
       {
-        $('#register').prop('disabled', true);
-      }
+        validateEmail()
+        
+        if ($("#userExistsAlert").is(':hidden'))
+        {
+          e.preventDefault();
+          
+          var inputFirstNameFieldValue = document.getElementById("inputFirstName").value;
+          var inputLastNameFieldValue = document.getElementById("inputLastName").value;
+          var inputEmailFieldValue = document.getElementById("inputEmail").value;
+          var inputPasswordFieldValue = document.getElementById("inputPassword").value;
+          
+          // Hash password with SHA-256
+          var hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(inputPasswordFieldValue));
+          
+          // Send registration information to the server.
+          $.ajax(
+          {
+            type: "POST",
+            url: "register",
+            data: {firstname:inputFirstNameFieldValue, lastname:inputLastNameFieldValue, email:inputEmailFieldValue, password:hash},
+            dataType: "json",
+            success: function (data, textStatus, jqXHR)
+            {
+              $("#connectionFailedAlert").hide();
+              
+              if (typeof data.token !== "undefined")
+              {
+                document.cookie = data;
+                window.location.href = "login.html";
+              }
+              else if (typeof data.error !== "undefined")
+              {
+                console.log("SERVER ERROR: " + data.error);
+                location.reload(true);
+              }
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+              console.log("Could not reach server.");
+              $("#connectionFailedAlert").show();
+            }
+          });
+        }
+      });
     });
   </script>
 </head>
@@ -136,16 +185,18 @@
     </form>
   </nav>
 
-  <!-- Error/Alert -->
-  <div class="alert alert-danger alert-dismissible collapse" role="alert" id="userExistsAlert" style="z-index: 1">
-    User is already registered! <a href="login.html" class="alert-link">Click here to login</a>
-    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-      <span aria-hidden="true">&times;</span>
-    </button>
+  <!-- User Exists Error/Alert -->
+  <div class="alert alert-danger collapse" role="alert" id="userExistsAlert" style="z-index: 1">
+    This email is already taken. <a href="login.html" class="alert-link">Click here to login</a>
+  </div>
+
+  <!-- Connection Failed Error/Alert -->
+  <div class="alert alert-danger collapse" role="alert" id="connectionFailedAlert" style="z-index: 1">
+    Unable to connect to server!
   </div>
 
   <!-- Register Form -->
-  <form>
+  <form id="registration_form">
     <div class="row">
       <div class="container col-6 col-md-4 card p-3" style="margin-top: 5%;">
         <div style="text-align: center;"><h4>Register Here</h4></div>
@@ -164,28 +215,22 @@
 
           <div class="form-group">
             <label for="inputEmail">Email</label>
-            <input type="email" class="form-control" id="inputEmail" placeholder="name@email.com" required>
+            <input type="text" class="form-control" id="inputEmail" placeholder="name@email.com" required pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
             <div class="invalid-feedback">Please provide a valid email.</div>
           </div>
           <div class="form-group">
             <label for="inputConfirmEmail">Confirm Email</label>
             <input type="text" class="form-control" id="inputConfirmEmail" placeholder="name@email.com" required>
-            <small id="confirmEmailRequirement" class="form-text text-muted">Emails must match.</small>
-            <div class="invalid-feedback">Emails do not match.</div>
 
           </div>
           <div class="form-group">
             <label for="inputPassword">Password</label>
             <input type="password" class="form-control" id="inputPassword" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
-            <small id="passwordRequirement" class="form-text text-muted">Your password must be at least 8 characters long, contain uppercase and lowercase letters, and numbers.</small>
-            <div class="invalid-feedback">Password does not meet requirements.</div>
+            <small id="passwordRequirement" class="form-text text-muted">Your password must be at least 8 characters long, contain uppercase letters, lowercase letters, and numbers.</small>
           </div>
           <div class="form-group">
             <label for="inputConfirmPassword">Confirm Password</label>
             <input type="password" class="form-control" id="inputConfirmPassword" required>
-            <small id="confirmPassRequirement" class="form-text text-muted">Passwords must match.</small>
-            <div class="invalid-feedback">Password does not match.</div>
-
           </div>
 
           <button type="submit" class="btn btn-primary" id="register" disabled=true>Register</button>

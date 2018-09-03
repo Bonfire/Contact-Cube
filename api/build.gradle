@@ -21,6 +21,8 @@ dependencies {
     compile 'org.jdbi:jdbi3-sqlobject:3.4.0'
     // Google's JSON library for easy (de)?serialization
     compile 'com.google.code.gson:gson:2.8.5'
+    // googles collection library for useful features like hash functions
+    compile 'com.google.guava:guava:26.0-jre'
     // Jetty
     compile 'org.eclipse.jetty:jetty-server:9.4.12.RC2'
     compile 'org.eclipse.jetty:jetty-servlet:9.4.12.RC2'

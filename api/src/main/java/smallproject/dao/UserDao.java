@@ -41,4 +41,17 @@ public interface UserDao {
     @RegisterBeanMapper(User.class)
     User getUserByEmail(final String email);
 
+    /**
+     * Looks up into the database for an matching email and password pair. If one is found, it will return
+     * the {@link User} object. If not, it will return <tt>null</tt>.
+     *
+     * @param email    the email to lookup
+     * @param password the password corresponding to the email
+     * @return User if a matching pair is found
+     * <tt>null</tt> if no matching user found
+     */
+    @SqlQuery("SELECT * FROM users WHERE email = ? AND password = ?")
+    @RegisterBeanMapper(User.class)
+    User userLogin(final String email, final String password);
+
 }

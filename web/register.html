@@ -2,243 +2,241 @@
 <html lang="en">
 
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" charset="utf-8">
 
-  <title>Contact Manager - Register</title>
+    <title>Contact Manager - Register</title>
 
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-  <script src="https://bitwiseshiftleft.github.io/sjcl/sjcl.js" integrity="sha384-zJXJqc5ftX51ojskUi8aWFg0yrz9P61p6Wyg8n0cyFYsgWiAYtxnVWzh8d8BLcw0" crossorigin="anonymous"></script>
-  
-  <!-- Bootstrap CSS/JS -->
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+            integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+            crossorigin="anonymous"></script>
+    <script src="https://bitwiseshiftleft.github.io/sjcl/sjcl.js"
+            integrity="sha384-zJXJqc5ftX51ojskUi8aWFg0yrz9P61p6Wyg8n0cyFYsgWiAYtxnVWzh8d8BLcw0"
+            crossorigin="anonymous"></script>
 
-  <script type="application/javascript">
-    // Ensure the registration email is not already in the database.
-    function validateEmail()
-    {
-      var inputField = document.getElementById("inputEmail");
-      
-      if (inputField.checkValidity())
-      {
-        $.ajax(
-        {
-          type: "POST",
-          url: "register",
-          data: {email:inputField.value},
-          dataType: "json",
-          success: function (data, textStatus, jqXHR)
-          {
-            $("#connectionFailedAlert").hide();
-          
-            if (typeof data.error !== "undefined")
-            {
-              console.log("SERVER ERROR: " + data.error);
-              $("#userExistsAlert").show();
+    <!-- Bootstrap CSS/JS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <script type="application/javascript">
+
+        const BASE_URL = " http://localhost:8080/";
+
+        // Ensure the registration email is not already in the database.
+        function validateEmail() {
+            var inputField = document.getElementById("inputEmail");
+
+            if (inputField.checkValidity()) {
+                $.ajax(
+                    {
+                        type: "POST",
+                        url: "register",
+                        data: {email: inputField.value},
+                        dataType: "json",
+                        success: function (data, textStatus, jqXHR) {
+                            $("#connectionFailedAlert").hide();
+
+                            if (typeof data.error !== "undefined") {
+                                console.log("SERVER ERROR: " + data.error);
+                                $("#userExistsAlert").show();
+                            }
+                            else {
+                                $("#userExistsAlert").hide();
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            $("#connectionFailedAlert").show();
+                        }
+                    });
             }
-            else
-            {
-              $("#userExistsAlert").hide();
+        }
+
+        // Ensure both emails are the same and valid.
+        function confirmEmail() {
+            var inputField = document.getElementById("inputEmail");
+            var inputConfirmField = document.getElementById("inputConfirmEmail");
+
+            if (inputField.value === inputConfirmField.value) {
+                if (inputConfirmField.value !== "" && inputField.checkValidity() && !inputConfirmField.checkValidity()) {
+                    inputConfirmField.setCustomValidity("");
+                }
             }
-          },
-          error: function (jqXHR, textStatus, errorThrown)
-          {
-            console.log("Could not reach server.");
-            $("#connectionFailedAlert").show();
-          }
+            else if (inputConfirmField.checkValidity()) {
+                inputConfirmField.setCustomValidity("Invalid");
+            }
+        }
+
+        // Ensure both passwords are the same and valid.
+        function confirmPassword() {
+            var inputField = document.getElementById("inputPassword");
+            var inputConfirmField = document.getElementById("inputConfirmPassword");
+
+            if (inputField.value === inputConfirmField.value) {
+                if (inputConfirmField.value !== "" && inputField.checkValidity() && !inputConfirmField.checkValidity()) {
+                    inputConfirmField.setCustomValidity("");
+                }
+            }
+            else if (inputConfirmField.checkValidity()) {
+                inputConfirmField.setCustomValidity("Invalid");
+            }
+        }
+
+        // Since help messages and field confirmation aren't built into HTML5,
+        // they have to be implemented.
+        $(document).ready(function () {
+            $(document).on("focusout", "#inputEmail", validateEmail);
+
+            $(document).on("keyup", "#inputEmail", confirmEmail);
+            $(document).on("keyup", "#inputConfirmEmail", confirmEmail);
+
+            $(document).on("keyup", "#inputPassword", confirmPassword);
+            $(document).on("keyup", "#inputConfirmPassword", confirmPassword);
+
+            // Enables registration when all forms are valid.  On 'keyup' for responsiveness.
+            $(document).keyup(function () {
+                var inputFirstNameFieldValid = document.getElementById("inputFirstName").checkValidity();
+                var inputLastNameFieldValid = document.getElementById("inputLastName").checkValidity();
+                var inputEmailFieldValid = document.getElementById("inputEmail").checkValidity();
+                var inputEmailConfirmFieldValid = document.getElementById("inputConfirmEmail").checkValidity();
+                var inputPasswordFieldValid = document.getElementById("inputPassword").checkValidity();
+                var inputPasswordConfirmFieldValid = document.getElementById("inputConfirmPassword").checkValidity();
+
+                if (inputFirstNameFieldValid && inputLastNameFieldValid && inputEmailFieldValid && inputEmailConfirmFieldValid && inputPasswordFieldValid && inputPasswordConfirmFieldValid) {
+                    $('#register').prop('disabled', false);
+                }
+                else {
+                    $('#register').prop('disabled', true);
+                }
+            });
+
+            $("#registration_form").submit(function (e) {
+                validateEmail();
+
+                if ($("#userExistsAlert").is(':hidden')) {
+                    e.preventDefault();
+
+                    var inputFirstNameFieldValue = document.getElementById("inputFirstName").value;
+                    var inputLastNameFieldValue = document.getElementById("inputLastName").value;
+                    var inputEmailFieldValue = document.getElementById("inputEmail").value;
+                    var inputPasswordFieldValue = document.getElementById("inputPassword").value;
+
+                    // Hash password with SHA-256
+                    var hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(inputPasswordFieldValue));
+
+                    // create XML HTTP request
+                    var xhr = new XMLHttpRequest();
+                    var url = BASE_URL + "register";
+                    // debug the URL we are sending to.
+                    console.log("Sending to: " + url);
+                    xhr.open("POST", url, true);
+                    xhr.setRequestHeader("Content-Type", "application/json");
+                    // create callback for when state changes
+                    xhr.onreadystatechange = function () {
+                        if (xhr.responseText !== null) {
+                            let json = JSON.parse(xhr.responseText);
+                            if (xhr.status === 200) {
+                                console.log("Token: " + json.token)
+                            } else if (xhr.status >= 400) {
+                                console.log("ERROR: " + json.error)
+                            }
+                        }
+                    };
+                    // construct the JSON payload to send
+                    var payload = JSON.stringify({
+                        "email": inputEmailFieldValue,
+                        "password": hash,
+                        "firstname": inputFirstNameFieldValue,
+                        "lastname": inputLastNameFieldValue
+                    });
+                    // log the payload out to test it
+                    console.log(payload);
+                    // send the payload
+                    xhr.send(payload);
+
+                }
+            });
         });
-      }
-    }
-  
-    // Ensure both emails are the same and valid.
-    function confirmEmail()
-    {
-      var inputField = document.getElementById("inputEmail");
-      var inputConfirmField = document.getElementById("inputConfirmEmail");
-      
-      if (inputField.value === inputConfirmField.value)
-      {
-        if (inputConfirmField.value !== "" && inputField.checkValidity() && !inputConfirmField.checkValidity())
-        {
-          inputConfirmField.setCustomValidity("");
-        }
-      }
-      else if (inputConfirmField.checkValidity())
-      {
-        inputConfirmField.setCustomValidity("Invalid");
-      }
-    }
-    
-    // Ensure both passwords are the same and valid.
-    function confirmPassword()
-    {
-      var inputField = document.getElementById("inputPassword");
-      var inputConfirmField = document.getElementById("inputConfirmPassword");
-      
-      if (inputField.value === inputConfirmField.value)
-      {
-        if (inputConfirmField.value !== "" && inputField.checkValidity() && !inputConfirmField.checkValidity())
-        {
-          inputConfirmField.setCustomValidity("");
-        }
-      }
-      else if (inputConfirmField.checkValidity())
-      {
-        inputConfirmField.setCustomValidity("Invalid");
-      }
-    }
-    
-    // Since help messages and field confirmation aren't built into HTML5,
-    // they have to be implemented.
-    $(document).ready(function ()
-    {
-      $(document).on("focusout", "#inputEmail", validateEmail);
-      
-      $(document).on("keyup", "#inputEmail", confirmEmail);
-      $(document).on("keyup", "#inputConfirmEmail", confirmEmail);
-      
-      $(document).on("keyup", "#inputPassword", confirmPassword);
-      $(document).on("keyup", "#inputConfirmPassword", confirmPassword);
-      
-      // Enables registration when all forms are valid.  On 'keyup' for responsiveness.
-      $(document).keyup(function ()
-      {
-        var inputFirstNameFieldValid = document.getElementById("inputFirstName").checkValidity();
-        var inputLastNameFieldValid = document.getElementById("inputLastName").checkValidity();
-        var inputEmailFieldValid = document.getElementById("inputEmail").checkValidity();
-        var inputEmailConfirmFieldValid = document.getElementById("inputConfirmEmail").checkValidity();
-        var inputPasswordFieldValid = document.getElementById("inputPassword").checkValidity();
-        var inputPasswordConfirmFieldValid = document.getElementById("inputConfirmPassword").checkValidity();
-        
-        if (inputFirstNameFieldValid && inputLastNameFieldValid && inputEmailFieldValid && inputEmailConfirmFieldValid && inputPasswordFieldValid && inputPasswordConfirmFieldValid)
-        {
-          $('#register').prop('disabled', false);
-        }
-        else
-        {
-          $('#register').prop('disabled', true);
-        }
-      });
-      
-      $("#registration_form").submit(function (e)
-      {
-        validateEmail()
-        
-        if ($("#userExistsAlert").is(':hidden'))
-        {
-          e.preventDefault();
-          
-          var inputFirstNameFieldValue = document.getElementById("inputFirstName").value;
-          var inputLastNameFieldValue = document.getElementById("inputLastName").value;
-          var inputEmailFieldValue = document.getElementById("inputEmail").value;
-          var inputPasswordFieldValue = document.getElementById("inputPassword").value;
-          
-          // Hash password with SHA-256
-          var hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(inputPasswordFieldValue));
-          
-          // Send registration information to the server.
-          $.ajax(
-          {
-            type: "POST",
-            url: "register",
-            data: {firstname:inputFirstNameFieldValue, lastname:inputLastNameFieldValue, email:inputEmailFieldValue, password:hash},
-            dataType: "json",
-            success: function (data, textStatus, jqXHR)
-            {
-              $("#connectionFailedAlert").hide();
-              
-              if (typeof data.token !== "undefined")
-              {
-                document.cookie = data;
-                window.location.href = "login.html";
-              }
-              else if (typeof data.error !== "undefined")
-              {
-                console.log("SERVER ERROR: " + data.error);
-                location.reload(true);
-              }
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-              console.log("Could not reach server.");
-              $("#connectionFailedAlert").show();
-            }
-          });
-        }
-      });
-    });
-  </script>
+    </script>
 </head>
 
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-light bg-light">
+<!-- Navbar -->
+<nav class="navbar navbar-light bg-light">
     <a class="navbar-brand">Contact Manager</a>
     <form class="form-inline">
-      <a href="login.html">
-        <button class="btn btn-outline-primary mr-2 my-sm-0" type="button">Sign In</button>
-      </a>
-      <a href="register.html">
-        <button class="btn btn-primary my-2 my-sm-0" type="button">Register</button>
-      </a>
+        <a href="login.html">
+            <button class="btn btn-outline-primary mr-2 my-sm-0" type="button">Sign In</button>
+        </a>
+        <a href="register.html">
+            <button class="btn btn-primary my-2 my-sm-0" type="button">Register</button>
+        </a>
     </form>
-  </nav>
+</nav>
 
-  <!-- User Exists Error/Alert -->
-  <div class="alert alert-danger collapse" role="alert" id="userExistsAlert" style="z-index: 1">
+<!-- User Exists Error/Alert -->
+<div class="alert alert-danger collapse" role="alert" id="userExistsAlert" style="z-index: 1">
     This email is already taken. <a href="login.html" class="alert-link">Click here to login</a>
-  </div>
+</div>
 
-  <!-- Connection Failed Error/Alert -->
-  <div class="alert alert-danger collapse" role="alert" id="connectionFailedAlert" style="z-index: 1">
+<!-- Connection Failed Error/Alert -->
+<div class="alert alert-danger collapse" role="alert" id="connectionFailedAlert" style="z-index: 1">
     Unable to connect to server!
-  </div>
+</div>
 
-  <!-- Register Form -->
-  <form id="registration_form">
+<!-- Register Form -->
+<form id="registration_form">
     <div class="row">
-      <div class="container col-6 col-md-4 card p-3" style="margin-top: 5%;">
-        <div style="text-align: center;"><h4>Register Here</h4></div>
-        <hr>
-        <form class="container was-validated" novalidate>
-          <div class="form-row">
-            <div class="form-group col-md-6">
-              <label for="inputFirstName">First Name</label>
-              <input type="text" class="form-control" id="inputFirstName" placeholder="John" required>
-            </div>
-            <div class="form-group col-md-6">
-              <label for="inputLastName">Last Name</label>
-              <input type="text" class="form-control" id="inputLastName" placeholder="Smith" required>
-            </div>
-          </div>
+        <div class="container col-6 col-md-4 card p-3" style="margin-top: 5%;">
+            <div style="text-align: center;"><h4>Register Here</h4></div>
+            <hr>
+            <form class="container was-validated" novalidate>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
+                        <label for="inputFirstName">First Name</label>
+                        <input type="text" class="form-control" id="inputFirstName" placeholder="John" required>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="inputLastName">Last Name</label>
+                        <input type="text" class="form-control" id="inputLastName" placeholder="Smith" required>
+                    </div>
+                </div>
 
-          <div class="form-group">
-            <label for="inputEmail">Email</label>
-            <input type="text" class="form-control" id="inputEmail" placeholder="name@email.com" required pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
-            <div class="invalid-feedback">Please provide a valid email.</div>
-          </div>
-          <div class="form-group">
-            <label for="inputConfirmEmail">Confirm Email</label>
-            <input type="text" class="form-control" id="inputConfirmEmail" placeholder="name@email.com" required>
+                <div class="form-group">
+                    <label for="inputEmail">Email</label>
+                    <input type="text" class="form-control" id="inputEmail" placeholder="name@email.com" required
+                           pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
+                    <div class="invalid-feedback">Please provide a valid email.</div>
+                </div>
+                <div class="form-group">
+                    <label for="inputConfirmEmail">Confirm Email</label>
+                    <input type="text" class="form-control" id="inputConfirmEmail" placeholder="name@email.com"
+                           required>
 
-          </div>
-          <div class="form-group">
-            <label for="inputPassword">Password</label>
-            <input type="password" class="form-control" id="inputPassword" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
-            <small id="passwordRequirement" class="form-text text-muted">Your password must be at least 8 characters long, contain uppercase letters, lowercase letters, and numbers.</small>
-          </div>
-          <div class="form-group">
-            <label for="inputConfirmPassword">Confirm Password</label>
-            <input type="password" class="form-control" id="inputConfirmPassword" required>
-          </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputPassword">Password</label>
+                    <input type="password" class="form-control" id="inputPassword" required
+                           pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+                    <small id="passwordRequirement" class="form-text text-muted">Your password must be at least 8
+                        characters long, contain uppercase letters, lowercase letters, and numbers.
+                    </small>
+                </div>
+                <div class="form-group">
+                    <label for="inputConfirmPassword">Confirm Password</label>
+                    <input type="password" class="form-control" id="inputConfirmPassword" required>
+                </div>
 
-          <button type="submit" class="btn btn-primary" id="register" disabled=true>Register</button>
-        </form>
-        <hr>
-      </div>
+                <button type="submit" class="btn btn-primary" id="register" disabled=true>Register</button>
+            </form>
+            <hr>
+        </div>
     </div>
-  </form>
+</form>
 </body>
 
 </html>

@@ -60,6 +60,8 @@ public class RegistrationHandler extends AbstractHandler {
         }
 
         final JsonObject json = element.getAsJsonObject();
+
+        //region Email validation only
         if (json.size() == 1 && json.getAsJsonObject().has("email")) {
             // request was not a registration, but an email check...
             final String email = json.getAsJsonObject().get("email").getAsString();
@@ -79,6 +81,7 @@ public class RegistrationHandler extends AbstractHandler {
                 return;
             }
         }
+        //endregion
 
         try {
             // take the payload and deserialize it to a User

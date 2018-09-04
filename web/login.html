@@ -50,6 +50,10 @@
               document.cookie = "token=" + data.token;
               window.location.href = "dashboard.html";
             }
+            else
+            {
+              $("#inputPassword").val("");
+            }
           },
           error: function (jqXHR, textStatus, errorThrown)
           {
@@ -62,10 +66,10 @@
             {
               $("#connectionFailedAlert").show();
             }
+            
+            $("#inputPassword").val("");
           }
         });
-        
-        $("#inputPassword").val(""); 
       });
     });
   </script>

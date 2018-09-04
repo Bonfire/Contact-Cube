@@ -15,6 +15,8 @@
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
   <script type="application/javascript">
+    var email_verified = false;
+    
     // Ensure the registration email is not already in the database.
     function validateEmail()
     {
@@ -37,16 +39,19 @@
           
             if (typeof data.error !== "undefined")
             {
+              email_verified = false;
               console.log("SERVER ERROR: " + data.error);
               $("#userExistsAlert").show();
             }
             else
             {
+              email_verified = true;
               $("#userExistsAlert").hide();
             }
           },
           error: function (jqXHR, textStatus, errorThrown)
           {
+            email_verified = false;
             console.log("Could not reach server.");
             $("#connectionFailedAlert").show();
           }
@@ -128,7 +133,7 @@
       {
         validateEmail()
         
-        if ($("#userExistsAlert").is(':hidden'))
+        if (email_verified)
         {
           e.preventDefault();
           

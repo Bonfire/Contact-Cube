@@ -7,12 +7,12 @@ public class Session {
 
     public String token;
     public String ip;
-    public int userId;
+    public long userId;
 
     public Session() {
     }
 
-    public Session(final int userId, final String ip, final String token) {
+    public Session(final long userId, final String ip, final String token) {
         this.userId = userId;
         this.ip = ip;
         this.token = token;
@@ -34,7 +34,7 @@ public class Session {
         this.ip = ip;
     }
 
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 

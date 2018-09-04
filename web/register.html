@@ -26,7 +26,10 @@
         {
           type: "POST",
           url: "register",
-          data: {email:inputField.value},
+          data: JSON.stringify(
+          {
+            "email": inputField.value
+          }),
           dataType: "json",
           success: function (data, textStatus, jqXHR)
           {
@@ -142,7 +145,13 @@
           {
             type: "POST",
             url: "register",
-            data: {firstname:inputFirstNameFieldValue, lastname:inputLastNameFieldValue, email:inputEmailFieldValue, password:hash},
+            data: JSON.stringify(
+            {
+              "email": inputEmailFieldValue,
+              "password": hash,
+              "firstname": inputFirstNameFieldValue,
+              "lastname": inputLastNameFieldValue
+            }),
             dataType: "json",
             success: function (data, textStatus, jqXHR)
             {

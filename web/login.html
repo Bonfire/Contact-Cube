@@ -35,7 +35,11 @@
         {
           type: "POST",
           url: "login",
-          data: {username:$("#inputEmail").val(), password:hash},
+          data: JSON.stringify(
+          {
+            "email": $("#inputEmail").val(),
+            "password": hash
+          }),
           dataType: "json",
           success: function (data, textStatus, jqXHR)
           {

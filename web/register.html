@@ -37,23 +37,31 @@
           {
             $("#connectionFailedAlert").hide();
           
-            if (typeof data.error !== "undefined")
+            if (typeof data.success !== "undefined")
             {
-              email_verified = false;
-              console.log("SERVER ERROR: " + data.error);
-              $("#userExistsAlert").show();
+              email_verified = true;
+              $("#userExistsAlert").hide();
             }
             else
             {
-              email_verified = true;
+              email_verified = false;
               $("#userExistsAlert").hide();
             }
           },
           error: function (jqXHR, textStatus, errorThrown)
           {
             email_verified = false;
-            console.log("Could not reach server.");
-            $("#connectionFailedAlert").show();
+            
+            if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
+            {
+              console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+              $("#userExistsAlert").show();
+            }
+            else
+            {
+              $("#userExistsAlert").hide();
+              $("#connectionFailedAlert").show();
+            }
           }
         });
       }

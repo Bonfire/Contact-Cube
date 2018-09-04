@@ -50,16 +50,18 @@
               document.cookie = "token=" + data.token;
               window.location.href = "dashboard.html";
             }
-            else if (typeof data.error !== "undefined")
-            {
-              console.log("SERVER ERROR: " + data.error);
-              $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>" + data.error + "</p>");  
-            }
           },
           error: function (jqXHR, textStatus, errorThrown)
           {
-            console.log("Could not reach server.");
-            $("#connectionFailedAlert").show();
+            if (typeof jqXHR.responseJSON.error !== "undefined")
+            {
+              console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+              $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>" + jqXHR.responseJSON.error + "</p>");
+            }
+            else
+            {
+              $("#connectionFailedAlert").show();
+            }
           }
         });
       });

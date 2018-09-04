@@ -32,27 +32,33 @@ public class AdminHandler extends AbstractHandler {
 
         final JsonObject obj = new JsonObject();
 
-        if (action.equals("truncate_users")) {
-            dbi.useExtension(UserDao.class, UserDao::truncateTable);
-            obj.addProperty("status", "users truncated!");
-            log.info("Cleared user table");
-        } else if (action.equals("user_count")) {
-            long count = dbi.withExtension(UserDao.class, UserDao::userCount);
-            obj.addProperty("userCount", count);
-            log.info("User count: " + count);
-        } else if (action.equals("list_users")) {
-            final JsonArray array = new JsonArray();
-            long count = dbi.withExtension(UserDao.class, UserDao::userCount);
-            List<User> users = dbi.withExtension(UserDao.class, UserDao::allUsers);
-            users.forEach(user -> {
-                final JsonObject userObj = new JsonObject();
-                userObj.addProperty("email", user.email);
-                userObj.addProperty("firstname", user.firstname);
-                userObj.addProperty("lastname", user.lastname);
-                array.add(userObj);
-            });
-            obj.addProperty("userCount", count);
-            obj.add("users", array);
+        switch (action) {
+            case "truncate_users":
+                dbi.useExtension(UserDao.class, UserDao::truncateTable);
+                obj.addProperty("status", "users truncated!");
+                log.info("Cleared user table");
+                break;
+            case "user_count": {
+                long count = dbi.withExtension(UserDao.class, UserDao::userCount);
+                obj.addProperty("userCount", count);
+                log.info("User count: " + count);
+                break;
+            }
+            case "list_users": {
+                final JsonArray array = new JsonArray();
+                long count = dbi.withExtension(UserDao.class, UserDao::userCount);
+                List<User> users = dbi.withExtension(UserDao.class, UserDao::allUsers);
+                users.forEach(user -> {
+                    final JsonObject userObj = new JsonObject();
+                    userObj.addProperty("email", user.email);
+                    userObj.addProperty("firstname", user.firstname);
+                    userObj.addProperty("lastname", user.lastname);
+                    array.add(userObj);
+                });
+                obj.addProperty("userCount", count);
+                obj.add("users", array);
+                break;
+            }
         }
 
         resp.setStatus(HttpServletResponse.SC_OK);

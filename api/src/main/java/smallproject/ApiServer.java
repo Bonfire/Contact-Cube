@@ -6,6 +6,8 @@ import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
+import smallproject.dao.SessionDao;
+import smallproject.dao.UserDao;
 import smallproject.handler.AdminHandler;
 import smallproject.handler.LoginHandler;
 import smallproject.handler.RegistrationHandler;
@@ -52,6 +54,10 @@ public class ApiServer {
         final Jdbi dbi = Jdbi.create(ds);
         log.info("Successfully connected to database");
         dbi.installPlugin(new SqlObjectPlugin());
+
+        // create tables
+        dbi.useExtension(UserDao.class, UserDao::createTable);
+        dbi.useExtension(SessionDao.class, SessionDao::createTable);
 
         // register the handlers to their respective URLs
         handler.addServletWithMapping(new ServletHolder(new RegistrationHandler(dbi)), "/register");

@@ -2,6 +2,7 @@ package smallproject.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import smallproject.dao.SessionDao;
@@ -13,24 +14,25 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 /**
  * @author Matthew
  */
 public class RegistrationHandler extends AbstractHandler {
 
-    private static final Predicate<String> PATTERN_EMAIL = Pattern.compile("^[a-zA-Z0-9_+&*-]+(?:\\." +
-            "[a-zA-Z0-9_+&*-]+)*@" +
-            "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
-            "A-Z]{2,7}$").asPredicate();
+    private static final EmailValidator EMAIL_VALIDATOR = EmailValidator.getInstance(false, true);
 
     private static final String ERROR_DESERIALIZE_FAIL = "unable to construct user from payload";
     private static final String ERROR_INVALID_EMAIL = "invalid email address";
     private static final String ERROR_INVALID_PASSWORD = "invalid password";
     private static final String ERROR_INVALID_FIRST_NAME = "invalid first name";
     private static final String ERROR_INVALID_LAST_NAME = "invalid last name";
+
+    public static void main(String[] args) {
+
+        System.out.println(EMAIL_VALIDATOR.isValid("ajjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj@bjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj.co"));
+
+    }
 
     public RegistrationHandler(final Jdbi dbi) {
         super(dbi);
@@ -59,7 +61,7 @@ public class RegistrationHandler extends AbstractHandler {
             }
 
             // validate email address
-            if (registrant.email == null || registrant.email.isEmpty() || !PATTERN_EMAIL.test(registrant.email)) {
+            if (registrant.email == null || registrant.email.isEmpty() || !EMAIL_VALIDATOR.isValid(registrant.email)) {
                 error(response, ERROR_INVALID_EMAIL);
                 return;
             }
@@ -90,7 +92,7 @@ public class RegistrationHandler extends AbstractHandler {
                 final User registeredUser = dao.getUserByEmail(registrant.email);
                 if (registeredUser != null && registeredUser.id != -1) {
                     // user already exists, lets see if the password is correct...
-                    final User authenticatedUser = dao.userLogin(registrant.email, registrant.password);
+                    final User authenticatedUser = dao.login(registrant.email, registrant.password);
                     if (authenticatedUser == null) {
                         // email exists in the database, but password was wrong, return an error
                         log.warning("Registration failed for user: \"" + registrant.email + "\", user already exists!");

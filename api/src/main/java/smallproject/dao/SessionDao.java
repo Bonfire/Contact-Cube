@@ -14,9 +14,12 @@ import smallproject.model.User;
  */
 public interface SessionDao {
 
+    @SqlUpdate("TRUNCATE TABLE sessions")
+    void truncateTable();
+
     @SqlQuery("SELECT * FROM sessions WHERE userId = ? AND ip = ?")
     @RegisterBeanMapper(Session.class)
-    Session _getSession(final int userId, final String ip);
+    Session _getSession(final long userId, final String ip);
 
     @SqlUpdate("INSERT INTO sessions (userId, ip, token) VALUES (:userId, :ip, :token)")
     void _insertSession(@BindFields final Session session);
@@ -35,7 +38,7 @@ public interface SessionDao {
     default Session create(final User user, final String ip) {
 
         // make sure this is a real user
-        final int userId = user.id;
+        final long userId = user.id;
         if (userId == -1) return null;
 
         // lookup session table
@@ -46,7 +49,7 @@ public interface SessionDao {
 
         final HashFunction function = Hashing.sha256();
         final String token = function.newHasher()
-                .putInt(userId)
+                .putLong(userId)
                 .putUnencodedChars(ip)
                 .hash()
                 .toString();

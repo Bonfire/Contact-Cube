@@ -68,7 +68,7 @@ public class LoginHandler extends AbstractHandler {
         try (final Handle h = dbi.open()) {
             // attach the handle to the userdao
             final UserDao userDao = h.attach(UserDao.class);
-            final User authenticatedUser = userDao.userLogin(email, password);
+            final User authenticatedUser = userDao.login(email, password);
             // if authenticatedUser is null, no match for email/password
             if (authenticatedUser == null) {
                 error(response, HttpServletResponse.SC_FORBIDDEN, "invalid email/password");

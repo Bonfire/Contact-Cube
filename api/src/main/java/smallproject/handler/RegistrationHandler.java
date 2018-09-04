@@ -30,14 +30,14 @@ public class RegistrationHandler extends AbstractHandler {
     private static final String ERROR_INVALID_FIRST_NAME = "invalid first name";
     private static final String ERROR_INVALID_LAST_NAME = "invalid last name";
 
+    public RegistrationHandler(final Jdbi dbi) {
+        super(dbi);
+    }
+
     public static void main(String[] args) {
 
         System.out.println(EMAIL_VALIDATOR.isValid("ajjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj@bjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj.co"));
 
-    }
-
-    public RegistrationHandler(final Jdbi dbi) {
-        super(dbi);
     }
 
     /**
@@ -53,31 +53,38 @@ public class RegistrationHandler extends AbstractHandler {
         // get the IP that the request came from
         final String ip = this.getIpAddress(req);
 
-        final JsonElement json = new JsonParser().parse(getPayload(req.getReader()));
+        final JsonElement element = new JsonParser().parse(getPayload(req.getReader()));
+        if (element == null || !element.isJsonObject()) {
+            error(response, ERROR_DESERIALIZE_FAIL);
+            return;
+        }
+
+        final JsonObject json = element.getAsJsonObject();
+        if (json.size() == 1 && json.getAsJsonObject().has("email")) {
+            // request was not a registration, but an email check...
+            final String email = json.getAsJsonObject().get("email").getAsString();
+            if (email == null || email.isEmpty() || !EMAIL_VALIDATOR.isValid(email)) {
+                error(response, ERROR_INVALID_EMAIL);
+                return;
+            }
+            // email is a valid email, lets see if it is in use...
+            User user = dbi.withExtension(UserDao.class, dao -> dao.getUserByEmail(email));
+            if (user == null) {
+                final JsonObject obj = new JsonObject();
+                obj.addProperty("success", "email is valid");
+                ok(response, obj);
+                return;
+            } else {
+                error(response, "email is already in use");
+                return;
+            }
+        }
 
         try {
             // take the payload and deserialize it to a User
             final User registrant = new Gson().fromJson(json, User.class);
             if (registrant == null) {
                 // if the object is null that means deserialization failed...
-                if (json != null && json.isJsonObject() && json.getAsJsonObject().has("email")) {
-                    // request was not a registration, but an email check...
-                    final String email = json.getAsJsonObject().get("email").getAsString();
-                    if (email == null || email.isEmpty() || !EMAIL_VALIDATOR.isValid(email)) {
-                        error(response, ERROR_INVALID_EMAIL);
-                        return;
-                    }
-                    // email is a valid email, lets see if it is in use...
-                    User user = dbi.withExtension(UserDao.class, dao -> dao.getUserByEmail(email));
-                    if (user == null) {
-                        final JsonObject obj = new JsonObject();
-                        obj.addProperty("success", "email is valid");
-                        ok(response, obj);
-                        return;
-                    } else {
-                        error(response, "email is already in use");
-                    }
-                }
                 error(response, ERROR_DESERIALIZE_FAIL);
                 return;
             }

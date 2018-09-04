@@ -25,7 +25,7 @@ public interface UserDao {
                     "  `email` varchar(254) NOT NULL,\n" +
                     "  `password` char(64) NOT NULL,\n" +
                     "  PRIMARY KEY (`id`)\n" +
-                    ") ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
+                    ") ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4"
     )
     void createTable();
 

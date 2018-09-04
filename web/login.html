@@ -53,7 +53,7 @@
           },
           error: function (jqXHR, textStatus, errorThrown)
           {
-            if (typeof jqXHR.responseJSON.error !== "undefined")
+            if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
             {
               console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
               $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>" + jqXHR.responseJSON.error + "</p>");
@@ -64,6 +64,8 @@
             }
           }
         });
+        
+        $("#inputPassword").val(""); 
       });
     });
   </script>

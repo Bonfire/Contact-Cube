@@ -65,25 +65,30 @@ public class LoginHandler extends AbstractHandler {
             return;
         }
 
-        try (final Handle h = dbi.open()) {
-            // attach the handle to the userdao
-            final UserDao userDao = h.attach(UserDao.class);
-            final User authenticatedUser = userDao.login(email, password);
-            // if authenticatedUser is null, no match for email/password
-            if (authenticatedUser == null) {
-                error(response, HttpServletResponse.SC_FORBIDDEN, "invalid email/password");
-                return;
+        try {
+            try (final Handle h = dbi.open()) {
+                // attach the handle to the userdao
+                final UserDao userDao = h.attach(UserDao.class);
+                final User authenticatedUser = userDao.login(email, password);
+                // if authenticatedUser is null, no match for email/password
+                if (authenticatedUser == null) {
+                    error(response, HttpServletResponse.SC_FORBIDDEN, "invalid email/password");
+                    return;
+                }
+                // some match was found, lookup session
+                final SessionDao sessionDao = h.attach(SessionDao.class);
+                final Session session = sessionDao.create(authenticatedUser, ip);
+                if (session == null) {
+                    badRequest(response, "unable to create session");
+                    return;
+                }
+                final JsonObject payload = new JsonObject();
+                payload.addProperty("token", session.token);
+                ok(response, payload);
             }
-            // some match was found, lookup session
-            final SessionDao sessionDao = h.attach(SessionDao.class);
-            final Session session = sessionDao.create(authenticatedUser, ip);
-            if (session == null) {
-                badRequest(response, "unable to create session");
-                return;
-            }
-            final JsonObject payload = new JsonObject();
-            payload.addProperty("token", session.token);
-            ok(response, payload);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            error(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
     }

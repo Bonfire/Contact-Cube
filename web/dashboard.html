@@ -22,20 +22,19 @@
       
       function filterContent()
       {
-        // Declare variables
-        var input, filter, contacts, tr, td, i, j, exists;
         var input = document.getElementById("inputFilter");
         var filter = input.value.replace(/[^0-9a-z]/gi, '').toUpperCase();
         var contacts = document.getElementById("tableContacts");
         var tr = contacts.getElementsByTagName('tr');
         var td, row_contains_filter;
 
-        // Loop through all list items, and hide those who don't match the search query
+        // Only show rows that match the filter
         for (var i = 0; i < tr.length; i++)
         {
           td = tr[i].getElementsByTagName("td");
           row_contains_filter = false;
           
+          // Search for match in each column
           for (var j = 0; j < td.length; j++)
           {
             if (td[j].innerHTML.replace(/[^0-9a-z]/gi, '').toUpperCase().indexOf(filter) > -1)

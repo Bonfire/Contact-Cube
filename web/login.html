@@ -16,7 +16,7 @@
 
   <script type="application/javascript">
     // Automatic login
-    if (typeof document.cookie.token !== "undefined")
+    if (document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1") !== "")
     {
       window.location.href = "dashboard.html";
     }
@@ -47,7 +47,7 @@
           
             if (typeof data.token !== "undefined")
             {
-              document.cookie = data;
+              document.cookie = "token=" + data.token;
               window.location.href = "dashboard.html";
             }
             else if (typeof data.error !== "undefined")

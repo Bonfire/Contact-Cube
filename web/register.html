@@ -164,7 +164,7 @@
               
               if (typeof data.token !== "undefined")
               {
-                document.cookie = data;
+                document.cookie = "token=" + data.token;
                 window.location.href = "login.html";
               }
               else if (typeof data.error !== "undefined")

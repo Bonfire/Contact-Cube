@@ -5,6 +5,7 @@ import org.jdbi.v3.sqlobject.customizer.BindFields;
 import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
+import org.jdbi.v3.sqlobject.transaction.Transaction;
 import smallproject.model.User;
 
 import java.util.List;
@@ -15,14 +16,16 @@ import java.util.List;
 public interface UserDao {
 
     @SqlUpdate(
-            "CREATE TABLE IF NOT EXISTS users " +
-                    "(" +
-                    "id BIGINT PRIMARY KEY AUTO_INCREMENT," +
-                    "email VARCHAR(255) NOT NULL," +
-                    "password VARCHAR(255) NOT NULL," +
-                    "firstname VARCHAR(255) NOT NULL," +
-                    "lastname VARCHAR(255) NOT NULL" +
-                    ")"
+            "CREATE TABLE IF NOT EXISTS `users` (\n" +
+                    "  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,\n" +
+                    "  `dateCreated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+                    "  `dateLastLoggedIn` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+                    "  `firstName` varchar(50) NOT NULL,\n" +
+                    "  `lastName` varchar(50) NOT NULL,\n" +
+                    "  `email` varchar(254) NOT NULL,\n" +
+                    "  `password` char(64) NOT NULL,\n" +
+                    "  PRIMARY KEY (`id`)\n" +
+                    ") ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci"
     )
     void createTable();
 
@@ -61,6 +64,26 @@ public interface UserDao {
      */
     @SqlQuery("SELECT * FROM users WHERE email = ? AND password = ?")
     @RegisterBeanMapper(User.class)
-    User userLogin(final String email, final String password);
+    User _checkLogin(final String email, final String password);
+
+    @SqlUpdate("UPDATE users SET dateLastLoggedIn = CURRENT_TIMESTAMP WHERE id = :id")
+    void loggedIn(@BindFields final User user);
+
+    /**
+     * Performs a login.
+     *
+     * @param email
+     * @param password
+     * @return
+     */
+    @Transaction
+    default User login(final String email, final String password) {
+
+        final User user = _checkLogin(email, password);
+        if (user != null)
+            this.loggedIn(user);
+        return user;
+
+    }
 
 }

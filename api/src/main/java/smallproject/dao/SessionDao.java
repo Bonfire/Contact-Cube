@@ -15,9 +15,9 @@ import smallproject.model.User;
 public interface SessionDao {
 
     @SqlUpdate("CREATE TABLE IF NOT EXISTS sessions (" +
-            "userId BIGINT PRIMARY KEY," +
-            "ip VARCHAR(40) NOT NULL," +
-            "token VARCHAR(255) NOT NULL)")
+            "`userId` int(10) PRIMARY KEY," +
+            "`ip` varchar(40) NOT NULL," +
+            "`token` char(64) NOT NULL)")
     void createTable();
 
     @SqlUpdate("TRUNCATE TABLE sessions")

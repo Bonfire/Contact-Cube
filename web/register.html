@@ -101,7 +101,7 @@
     // they have to be implemented.
     $(document).ready(function ()
     {
-      $(document).on("focusout", "#inputEmail", validateEmail);
+      //$(document).on("focusout", "#inputEmail", validateEmail);
       
       $(document).on("keyup", "#inputEmail", confirmEmail);
       $(document).on("keyup", "#inputConfirmEmail", confirmEmail);
@@ -131,9 +131,10 @@
       
       $("#registration_form").submit(function (e)
       {
-        validateEmail()
+        //validateEmail()
         
-        if (email_verified)
+        //if (email_verified)
+        if (true)
         {
           e.preventDefault();
           
@@ -149,7 +150,7 @@
           $.ajax(
           {
             type: "POST",
-            url: "register",
+            url: "http://142.93.253.171:8080/register",
             data: JSON.stringify(
             {
               "email": inputEmailFieldValue,

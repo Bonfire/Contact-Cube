@@ -21,7 +21,6 @@ public class AdminHandler extends AbstractHandler {
 
     public AdminHandler(final Jdbi dbi) {
         super(dbi);
-        dbi.useExtension(UserDao.class, UserDao::createTable);
     }
 
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -17,7 +17,7 @@ public interface UserDao {
     @SqlUpdate(
             "CREATE TABLE IF NOT EXISTS users " +
                     "(" +
-                    "id INTEGER PRIMARY KEY AUTO_INCREMENT," +
+                    "id BIGINT PRIMARY KEY AUTO_INCREMENT," +
                     "email VARCHAR(255) NOT NULL," +
                     "password VARCHAR(255) NOT NULL," +
                     "firstname VARCHAR(255) NOT NULL," +

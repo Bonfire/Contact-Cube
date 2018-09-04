@@ -34,7 +34,6 @@ public class RegistrationHandler extends AbstractHandler {
 
     public RegistrationHandler(final Jdbi dbi) {
         super(dbi);
-        dbi.useExtension(UserDao.class, UserDao::createTable);
     }
 
     /**
@@ -50,66 +49,70 @@ public class RegistrationHandler extends AbstractHandler {
         // get the IP that the request came from
         final String ip = this.getIpAddress(req);
 
-        // take the payload and deserialize it to a User
-        final User registrant = new Gson().fromJson(getPayload(req.getReader()), User.class);
-        if (registrant == null) {
-            // if the object is null that means deserialization failed... return error
-            error(response, ERROR_DESERIALIZE_FAIL);
-            return;
-        }
+        try {
+            // take the payload and deserialize it to a User
+            final User registrant = new Gson().fromJson(getPayload(req.getReader()), User.class);
+            if (registrant == null) {
+                // if the object is null that means deserialization failed... return error
+                error(response, ERROR_DESERIALIZE_FAIL);
+                return;
+            }
 
-        // validate email address
-        if (registrant.email == null || registrant.email.isEmpty() || !PATTERN_EMAIL.test(registrant.email)) {
-            error(response, ERROR_INVALID_EMAIL);
-            return;
-        }
+            // validate email address
+            if (registrant.email == null || registrant.email.isEmpty() || !PATTERN_EMAIL.test(registrant.email)) {
+                error(response, ERROR_INVALID_EMAIL);
+                return;
+            }
 
-        // validate password
-        if (registrant.password == null || registrant.password.isEmpty()) {
-            error(response, ERROR_INVALID_PASSWORD);
-            return;
-        }
+            // validate password
+            if (registrant.password == null || registrant.password.isEmpty()) {
+                error(response, ERROR_INVALID_PASSWORD);
+                return;
+            }
 
-        // validate first name
-        if (registrant.firstname == null || registrant.firstname.isEmpty()) {
-            error(response, ERROR_INVALID_FIRST_NAME);
-            return;
-        }
+            // validate first name
+            if (registrant.firstname == null || registrant.firstname.isEmpty()) {
+                error(response, ERROR_INVALID_FIRST_NAME);
+                return;
+            }
 
-        // validate last name
-        if (registrant.lastname == null || registrant.lastname.isEmpty()) {
-            error(response, ERROR_INVALID_LAST_NAME);
-            return;
-        }
+            // validate last name
+            if (registrant.lastname == null || registrant.lastname.isEmpty()) {
+                error(response, ERROR_INVALID_LAST_NAME);
+                return;
+            }
 
-        // open connection to the database
-        try (final Handle h = dbi.open()) {
-            // attach the handle to the userdao
-            UserDao dao = h.attach(UserDao.class);
-            // look up the email in the database
-            final User registeredUser = dao.getUserByEmail(registrant.email);
-            if (registeredUser != null && registeredUser.id != -1) {
-                // user already exists, lets see if the password is correct...
-                final User authenticatedUser = dao.userLogin(registrant.email, registrant.password);
-                if (authenticatedUser == null) {
-                    // email exists in the database, but password was wrong, return an error
-                    log.warning("Registration failed for user: \"" + registrant.email + "\", user already exists!");
-                    error(response, "user already exists!");
+            // open connection to the database
+            try (final Handle h = dbi.open()) {
+                // attach the handle to the userdao
+                UserDao dao = h.attach(UserDao.class);
+                // look up the email in the database
+                final User registeredUser = dao.getUserByEmail(registrant.email);
+                if (registeredUser != null && registeredUser.id != -1) {
+                    // user already exists, lets see if the password is correct...
+                    final User authenticatedUser = dao.userLogin(registrant.email, registrant.password);
+                    if (authenticatedUser == null) {
+                        // email exists in the database, but password was wrong, return an error
+                        log.warning("Registration failed for user: \"" + registrant.email + "\", user already exists!");
+                        error(response, "user already exists!");
+                    } else {
+                        // user email already exists... but password is correct, so let's just log them in
+                        final SessionDao sessionDao = h.attach(SessionDao.class);
+                        final Session session = sessionDao.create(authenticatedUser, ip);
+                        sendSession(response, session);
+                    }
                 } else {
-                    // user email already exists... but password is correct, so let's just log them in
+                    long id = dao.insert(registrant);
+                    registrant.setId(id);
                     final SessionDao sessionDao = h.attach(SessionDao.class);
-                    final Session session = sessionDao.create(authenticatedUser, ip);
+                    final Session session = sessionDao.create(registrant, ip);
                     sendSession(response, session);
                 }
-            } else {
-                long id = dao.insert(registrant);
-                registrant.setId(id);
-                final SessionDao sessionDao = h.attach(SessionDao.class);
-                final Session session = sessionDao.create(registrant, ip);
-                sendSession(response, session);
             }
+            req.getReader().close();
+        } catch (final Throwable t) {
+            t.printStackTrace();
         }
-        req.getReader().close();
     }
 
     private void sendSession(HttpServletResponse response, Session session) throws IOException {

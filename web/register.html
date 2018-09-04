@@ -24,9 +24,7 @@
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
     <script type="application/javascript">
-
-        // const BASE_URL = " http://localhost:8080/";
-        const BASE_URL = " http://142.93.253.171:8080/";
+        var email_verified = false;
 
         // Ensure the registration email is not already in the database.
         function validateEmail() {
@@ -37,21 +35,34 @@
                     {
                         type: "POST",
                         url: "register",
-                        data: {email: inputField.value},
+                        data: JSON.stringify(
+                            {
+                                "email": inputField.value
+                            }),
                         dataType: "json",
                         success: function (data, textStatus, jqXHR) {
                             $("#connectionFailedAlert").hide();
 
-                            if (typeof data.error !== "undefined") {
-                                console.log("SERVER ERROR: " + data.error);
-                                $("#userExistsAlert").show();
+                            if (typeof data.success !== "undefined") {
+                                email_verified = true;
+                                $("#userExistsAlert").hide();
                             }
                             else {
+                                email_verified = false;
                                 $("#userExistsAlert").hide();
                             }
                         },
                         error: function (jqXHR, textStatus, errorThrown) {
-                            $("#connectionFailedAlert").show();
+                            email_verified = false;
+
+                            if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined") {
+                                console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+                                $("#userExistsAlert").show();
+                            }
+                            else {
+                                $("#userExistsAlert").hide();
+                                $("#connectionFailedAlert").show();
+                            }
                         }
                     });
             }
@@ -116,9 +127,9 @@
             });
 
             $("#registration_form").submit(function (e) {
-                validateEmail();
+                validateEmail()
 
-                if ($("#userExistsAlert").is(':hidden')) {
+                if (email_verified) {
                     e.preventDefault();
 
                     var inputFirstNameFieldValue = document.getElementById("inputFirstName").value;
@@ -129,36 +140,37 @@
                     // Hash password with SHA-256
                     var hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(inputPasswordFieldValue));
 
-                    // create XML HTTP request
-                    var xhr = new XMLHttpRequest();
-                    var url = BASE_URL + "register";
-                    // debug the URL we are sending to.
-                    console.log("Sending to: " + url);
-                    xhr.open("POST", url, true);
-                    xhr.setRequestHeader("Content-Type", "application/json");
-                    // create callback for when state changes
-                    xhr.onreadystatechange = function () {
-                        if (xhr.responseText !== null) {
-                            let json = JSON.parse(xhr.responseText);
-                            if (xhr.status === 200) {
-                                console.log("Token: " + json.token)
-                            } else if (xhr.status >= 400) {
-                                console.log("ERROR: " + json.error)
-                            }
-                        }
-                    };
-                    // construct the JSON payload to send
-                    var payload = JSON.stringify({
-                        "email": inputEmailFieldValue,
-                        "password": hash,
-                        "firstname": inputFirstNameFieldValue,
-                        "lastname": inputLastNameFieldValue
-                    });
-                    // log the payload out to test it
-                    console.log(payload);
-                    // send the payload
-                    xhr.send(payload);
+                    // Send registration information to the server.
+                    $.ajax(
+                        {
+                            type: "POST",
+                            url: "register",
+                            data: JSON.stringify(
+                                {
+                                    "email": inputEmailFieldValue,
+                                    "password": hash,
+                                    "firstname": inputFirstNameFieldValue,
+                                    "lastname": inputLastNameFieldValue
+                                }),
+                            dataType: "json",
+                            success: function (data, textStatus, jqXHR) {
+                                $("#connectionFailedAlert").hide();
 
+                                if (typeof data.token !== "undefined") {
+                                    document.cookie = "token=" + data.token;
+                                    window.location.href = "login.html";
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined") {
+                                    console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+                                    location.reload(true);
+                                }
+                                else {
+                                    $("#connectionFailedAlert").show();
+                                }
+                            }
+                        });
                 }
             });
         });

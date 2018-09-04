@@ -35,11 +35,11 @@
         {
           type: "POST",
           url: "login",
-          data: JSON.stringify(
-          {
-            "email": $("#inputEmail").val(),
-            "password": hash
-          }),
+            data: JSON.stringify(
+                {
+                    "email": $("#inputEmail").val(),
+                    "password": hash
+                }),
           dataType: "json",
           success: function (data, textStatus, jqXHR)
           {
@@ -47,25 +47,23 @@
           
             if (typeof data.token !== "undefined")
             {
-              document.cookie = "token=" + data.token;
+                document.cookie = "token=" + data.token;
               window.location.href = "dashboard.html";
             }
           },
           error: function (jqXHR, textStatus, errorThrown)
           {
-            if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
-            {
-              console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
-              $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>" + jqXHR.responseJSON.error + "</p>");
-            }
-            else
-            {
-              $("#connectionFailedAlert").show();
-            }
+              if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined") {
+                  console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+                  $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>" + jqXHR.responseJSON.error + "</p>");
+              }
+              else {
+                  $("#connectionFailedAlert").show();
+              }
           }
         });
-        
-        $("#inputPassword").val(""); 
+
+          $("#inputPassword").val("");
       });
     });
   </script>

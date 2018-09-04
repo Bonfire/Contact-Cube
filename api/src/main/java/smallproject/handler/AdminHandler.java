@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
+import smallproject.dao.SessionDao;
 import smallproject.dao.UserDao;
 import smallproject.model.User;
 
@@ -37,6 +38,13 @@ public class AdminHandler extends AbstractHandler {
                 dbi.useExtension(UserDao.class, UserDao::truncateTable);
                 obj.addProperty("status", "users truncated!");
                 log.info("Cleared user table");
+                break;
+            case "truncate_all":
+                dbi.useExtension(UserDao.class, UserDao::truncateTable);
+                log.info("cleared user table");
+                dbi.useExtension(SessionDao.class, SessionDao::truncateTable);
+                log.info("cleared session table");
+                obj.addProperty("status", "all databases wiped!");
                 break;
             case "user_count": {
                 long count = dbi.withExtension(UserDao.class, UserDao::userCount);

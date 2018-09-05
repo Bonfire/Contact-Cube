@@ -51,7 +51,12 @@ public class DashboardHandler extends AbstractHandler {
         if (!json.has("token")) {
             // there was no token, 2319!
             error(response, HttpServletResponse.SC_FORBIDDEN, "token not present!");
+            return;
         }
+
+        final JsonObject payload = new JsonObject();
+        payload.addProperty("status", "not implemented yet!");
+        ok(response, payload);
 
     }
 

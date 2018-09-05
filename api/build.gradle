@@ -28,6 +28,8 @@ dependencies {
     compile 'org.eclipse.jetty:jetty-servlet:9.4.12.RC2'
     // apache commons validator
     compile 'commons-validator:commons-validator:1.6'
+    // lombok
+    compileOnly 'org.projectlombok:lombok:1.18.2'
 }
 
 jar {

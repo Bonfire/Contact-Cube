@@ -66,6 +66,7 @@ public abstract class AbstractHandler extends HttpServlet {
     void error(final HttpServletResponse response, final int opcode, final String message) throws IOException {
         final JsonObject payload = new JsonObject();
         payload.addProperty("error", message);
+        log.info(payload.toString());
         respond(response, opcode, payload);
     }
 

@@ -54,6 +54,7 @@ public class RegistrationHandler extends AbstractHandler {
         }
 
         final JsonObject json = element.getAsJsonObject();
+        log.info("Recv: " + json);
 
         //region Email validation only
         if (json.size() == 1 && json.getAsJsonObject().has("email")) {

@@ -3,7 +3,12 @@ package smallproject.handler;
 import com.google.common.io.CharStreams;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.zaxxer.hikari.HikariDataSource;
 import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.sqlobject.SqlObjectPlugin;
+import smallproject.dao.ContactDao;
+import smallproject.dao.SessionDao;
+import smallproject.dao.UserDao;
 import smallproject.model.Session;
 
 import javax.servlet.http.HttpServlet;

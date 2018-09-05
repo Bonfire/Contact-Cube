@@ -10,6 +10,7 @@ import smallproject.dao.ContactDao;
 import smallproject.dao.SessionDao;
 import smallproject.dao.UserDao;
 import smallproject.handler.AdminHandler;
+import smallproject.handler.DashboardHandler;
 import smallproject.handler.LoginHandler;
 import smallproject.handler.RegistrationHandler;
 
@@ -67,6 +68,9 @@ public class ApiServer {
 
         handler.addServletWithMapping(new ServletHolder(new LoginHandler(dbi)), "/login");
         log.info("Created mapping for Login Handler");
+
+        handler.addServletWithMapping(new ServletHolder(new DashboardHandler(dbi)), "/dashboard");
+        log.info("Created mapping for Dashboard Handler");
 
         // just for misc. admin commands
         handler.addServletWithMapping(new ServletHolder(new AdminHandler(dbi)), "/admin");

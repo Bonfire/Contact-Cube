@@ -84,8 +84,9 @@ public interface UserDao {
      * @return          <tt>true</tt> if there is at least one match
      *                  <tt>false</tt> if no matches found
      */
-    @SqlQuery("select * from users where email = ?")
-    boolean lookupEmail(final String email);
+    default boolean lookupEmail(final String email) {
+        return getUserByEmail(email) != null;
+    }
 
     /**
      * Looks up into the database for an matching email and password pair. If one is found, it will return

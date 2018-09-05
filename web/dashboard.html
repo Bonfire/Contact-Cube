@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" charset="utf-8">
 
     <title>Contact Manager - Dashboard</title>
 
@@ -12,6 +12,53 @@
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    
+    <script type="application/javascript">
+      // Missing token redirect
+      if (document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1") === "")
+      {
+        window.location.href = "login.html";
+      }
+      
+      function filterContent()
+      {
+        var input = document.getElementById("inputFilter");
+        var filter = input.value.replace(/[^0-9a-z]/gi, '').toUpperCase();
+        var contacts = document.getElementById("tableContacts");
+        var tr = contacts.getElementsByTagName('tr');
+        var td, row_contains_filter;
+
+        // Only show rows that match the filter
+        for (var i = 0; i < tr.length; i++)
+        {
+          td = tr[i].getElementsByTagName("td");
+          row_contains_filter = false;
+          
+          // Search for match in each column
+          for (var j = 0; j < td.length; j++)
+          {
+            if (td[j].innerHTML.replace(/[^0-9a-z]/gi, '').toUpperCase().indexOf(filter) > -1)
+            {
+                row_contains_filter = true;
+                break;
+            }
+          }
+          
+          // Show/hide rows
+          if (row_contains_filter)
+          {
+              tr[i].style.display = "";
+          } else {
+              tr[i].style.display = "none";
+          }
+        }
+      }
+      
+      $(document).ready(function ()
+      {
+        $(document).on("keyup", "#inputFilter", filterContent);
+      });
+    </script>
 </head>
 
 <body>
@@ -173,7 +220,7 @@
                             </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody id="tableContacts">
                             <tr>
                                 <th scope="row">1</th>
                                 <td>John</td>

@@ -73,16 +73,21 @@
           
           if (inputFirstNameFieldValid && inputLastNameFieldValid && inputPhoneNumberFieldValid && inputAddressFieldValid && inputCityFieldValid && inputStateFieldValid && inputZipcodeFieldValid)
           {
-            $('#buttonAddContact').prop('disabled', false);
+            $('#addContactButton').prop('disabled', false);
           }
           else
           {
-            $('#buttonAddContact').prop('disabled', true);
+            $('#addContactButton').prop('disabled', true);
           }
         });
         
+        // Reset all fields when modal disappears
+        $('#addContactModal').on('hidden.bs.modal', function () {
+          document.getElementById("formAddContact").reset();
+        });
+        
         // Signs a user out of their account.
-        $("#buttonSignOut").click(function ()
+        $("#signOutButton").click(function ()
         {
           $.ajax(
           {
@@ -118,9 +123,56 @@
           });
         });
         
-        // Reset all fields when modal disappears
-        $('#addContactModal').on('hidden.bs.modal', function () {
-          document.getElementById("formAddContact").reset();
+        // Add contact to list. (server and client)
+        $("#addContactButton").click(function ()
+        {
+          var inputFirstNameField = document.getElementById("inputFirstName");
+          var inputLastNameField = document.getElementById("inputLastName");
+          var inputPhoneNumberField = document.getElementById("inputPhoneNumber");
+          var inputAddressField = document.getElementById("inputAddress");
+          var inputCityField = document.getElementById("inputCity");
+          var inputStateField = document.getElementById("inputState");
+          var inputZipcodeField = document.getElementById("inputZipcode");
+        
+          $.ajax(
+          {
+            type: "POST",
+            url: "dashboard",
+            data: JSON.stringify(
+            {
+              "token": token,
+              "firstname": inputFirstNameField.value,
+              "lastname": inputLastNameField.value,
+              "phonenumber": inputPhoneNumberField.value,
+              "address": inputAddressField.value,
+              "city": inputCityField.value,
+              "state": inputStateField.value,
+              "zipcode": inputZipcodeField.value
+            }),
+            dataType: "json",
+            success: function (data, textStatus, jqXHR)
+            {
+              $("#connectionFailedAlert").hide();
+            
+              if (typeof data.success !== "undefined")
+              {
+                // add contact to client
+              }
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+              if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
+              {
+                console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+              }
+              else
+              {
+                $("#connectionFailedAlert").show();
+              }
+            }
+          });
+          
+          $("#addContactModal").modal('hide');
         });
       });
     </script>
@@ -131,7 +183,7 @@
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand">Contact Manager</a>
         <form class="form-inline">
-          <button type="button" class="btn btn-primary mr-2 my-sm-0" id="buttonSignOut">Sign Out</button>
+          <button type="button" class="btn btn-primary mr-2 my-sm-0" id="signOutButton">Sign Out</button>
         </form>
     </nav>
 
@@ -260,7 +312,7 @@
                             </div>
                             <div class="modal-footer d-flex justify-content-between">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close Window</button>
-                                <button type="button" class="btn btn-primary" id="buttonAddContact" disabled=true>Save Changes</button>
+                                <button type="button" class="btn btn-primary" id="addContactButton" disabled=true>Save Changes</button>
                             </div>
                         </div>
                     </div>

@@ -73,10 +73,10 @@ public class DashboardHandler extends AbstractHandler {
             log.info("User #" + userId + "'s contacts: " + contacts.size());
             final JsonArray array = new JsonArray();
             contacts.forEach(contact -> {
-                System.out.println(gson.toJson(contact, Contact.class));
+                final JsonElement converted = gson.toJsonTree(contact, Contact.class);
+                array.add(converted);
             });
-
-            payload.addProperty("status", "hello user #" + userId + ", feature is not implemented yet!");
+            payload.add("contacts", array);
             ok(response, payload);
         } catch (final Exception e) {
             error(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());

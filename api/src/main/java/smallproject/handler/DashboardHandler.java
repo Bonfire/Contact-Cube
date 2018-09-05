@@ -68,15 +68,24 @@ public class DashboardHandler extends AbstractHandler {
                 return;
             }
 
+            if (!json.has("action")) {
+                badRequest(response, "no action specified");
+                return;
+            }
+
+            final String action = json.get("action").getAsString();
             final JsonObject payload = new JsonObject();
-            List<Contact> contacts = dbi.withExtension(ContactDao.class, dao -> dao.getContactsForUserId(userId));
-            log.info("User #" + userId + "'s contacts: " + contacts.size());
-            final JsonArray array = new JsonArray();
-            contacts.forEach(contact -> {
-                final JsonElement converted = gson.toJsonTree(contact, Contact.class);
-                array.add(converted);
-            });
-            payload.add("contacts", array);
+
+            switch (action) {
+                case "get_contacts":
+                    final List<Contact> contacts = dbi.withExtension(ContactDao.class, dao -> dao.getContactsForUserId(userId));
+                    final JsonArray array = new JsonArray();
+                    contacts.forEach(contact -> array.add(gson.toJsonTree(contact, Contact.class)));
+                    payload.add("contacts", array);
+                    payload.addProperty("success", "contacts retrieved");
+                    break;
+            }
+
             ok(response, payload);
         } catch (final Exception e) {
             error(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());

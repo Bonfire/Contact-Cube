@@ -60,7 +60,7 @@
       {
         $(document).on("keyup", "#inputFilter", filterContent);
         
-        // Enables registration when all forms are valid.  On 'keyup' for responsiveness.
+        // Enables save contact button when form is filled.  On 'keyup' for responsiveness.
         $(document).keyup(function ()
         {
           var inputFirstNameFieldValid = document.getElementById("inputFirstName").checkValidity();
@@ -81,6 +81,7 @@
           }
         });
         
+        // Signs a user out of their account.
         $("#buttonSignOut").click(function ()
         {
           $.ajax(
@@ -115,6 +116,11 @@
               }
             }
           });
+        });
+        
+        // Reset all fields when modal disappears
+        $('#addContactModal').on('hidden.bs.modal', function () {
+          document.getElementById("formAddContact").reset();
         });
       });
     </script>
@@ -165,7 +171,7 @@
                                 </button>
                             </div>
                             <div class="modal-body">
-                                <form>
+                                <form id="formAddContact">
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
                                             <label for="inputFirstName">First Name</label>

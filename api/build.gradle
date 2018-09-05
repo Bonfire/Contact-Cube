@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    id 'net.ltgt.apt' version '0.10'
+}
+
+group 'small-project'
+version '1.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    // HikariCP is a lightweight and fast JDBC connection pool
+    compile 'com.zaxxer:HikariCP:3.2.0'
+    // JDBC stuff for connection to MariaDB
+    compile 'org.mariadb.jdbc:mariadb-java-client:2.2.6'
+    compile 'org.jdbi:jdbi3-core:3.4.0'
+    compile 'org.jdbi:jdbi3-sqlobject:3.4.0'
+    // Google's JSON library for easy (de)?serialization
+    compile 'com.google.code.gson:gson:2.8.5'
+    // googles collection library for useful features like hash functions
+    compile 'com.google.guava:guava:26.0-jre'
+    // Jetty
+    compile 'org.eclipse.jetty:jetty-server:9.4.12.RC2'
+    compile 'org.eclipse.jetty:jetty-servlet:9.4.12.RC2'
+    // apache commons validator
+    compile 'commons-validator:commons-validator:1.6'
+    // lombok
+    compileOnly 'org.projectlombok:lombok:1.18.2'
+    apt "org.projectlombok:lombok:1.18.2"
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "smallproject.ApiServer"
+    }
+
+    from {
+        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}

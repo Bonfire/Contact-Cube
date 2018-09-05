@@ -70,6 +70,7 @@ public class DashboardHandler extends AbstractHandler {
 
             final JsonObject payload = new JsonObject();
             List<Contact> contacts = dbi.withExtension(ContactDao.class, dao -> dao.getContactsForUserId(userId));
+            log.info("User #" + userId + "'s contacts: " + contacts.size());
             final JsonArray array = new JsonArray();
             contacts.forEach(contact -> {
                 System.out.println(gson.toJson(contact, Contact.class));

@@ -75,10 +75,11 @@ public class DashboardHandler extends AbstractHandler {
                 System.out.println(gson.toJson(contact, Contact.class));
             });
 
-            payload.addProperty("status", "not implemented yet!");
+            payload.addProperty("status", "hello user #" + userId + ", feature is not implemented yet!");
             ok(response, payload);
         } catch (final Exception e) {
             error(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            return;
         }
     }
 

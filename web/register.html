@@ -24,6 +24,9 @@
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
     <script type="application/javascript">
+
+        const BASE_URL = "http://localhost:8080/";
+
         var email_verified = false;
 
         // Ensure the registration email is not already in the database.
@@ -34,7 +37,7 @@
                 $.ajax(
                     {
                         type: "POST",
-                        url: "register",
+                        url: BASE_URL + "register",
                         data: JSON.stringify(
                             {
                                 "email": inputField.value
@@ -144,7 +147,7 @@
                     $.ajax(
                         {
                             type: "POST",
-                            url: "register",
+                            url: BASE_URL + "register",
                             data: JSON.stringify(
                                 {
                                     "email": inputEmailFieldValue,

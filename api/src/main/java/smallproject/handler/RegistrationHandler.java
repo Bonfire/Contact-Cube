@@ -78,7 +78,7 @@ public class RegistrationHandler extends AbstractHandler {
 
         try {
             // take the payload and deserialize it to a User
-            final User registrant = new Gson().fromJson(json, User.class);
+            final User registrant = gson.fromJson(json, User.class);
             if (registrant == null) {
                 // if the object is null that means deserialization failed...
                 badRequest(response, ERROR_DESERIALIZE_FAIL);

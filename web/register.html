@@ -127,7 +127,7 @@
         var inputPasswordFieldValid = document.getElementById("inputPassword").checkValidity();
         var inputPasswordConfirmFieldValid = document.getElementById("inputConfirmPassword").checkValidity();
         
-        if (inputFirstNameFieldValid && inputLastNameFieldValid && inputEmailFieldValid && inputEmailConfirmFieldValid && inputPasswordFieldValid && inputPasswordConfirmFieldValid)
+        if (inputFirstNameFieldValid && inputLastNameFieldValid && inputEmailFieldValid && email_verified && inputEmailConfirmFieldValid && inputPasswordFieldValid && inputPasswordConfirmFieldValid)
         {
           $('#register').prop('disabled', false);
         }
@@ -139,57 +139,52 @@
       
       $("#registration_form").submit(function (e)
       {
-        validateEmail()
+        e.preventDefault();
         
-        if (email_verified)
+        var inputFirstNameFieldValue = document.getElementById("inputFirstName").value;
+        var inputLastNameFieldValue = document.getElementById("inputLastName").value;
+        var inputEmailFieldValue = document.getElementById("inputEmail").value;
+        var inputPasswordFieldValue = document.getElementById("inputPassword").value;
+        
+        // Hash password with SHA-256
+        var hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(inputPasswordFieldValue));
+        
+        // Send registration information to the server.
+        $.ajax(
         {
-          e.preventDefault();
-          
-          var inputFirstNameFieldValue = document.getElementById("inputFirstName").value;
-          var inputLastNameFieldValue = document.getElementById("inputLastName").value;
-          var inputEmailFieldValue = document.getElementById("inputEmail").value;
-          var inputPasswordFieldValue = document.getElementById("inputPassword").value;
-          
-          // Hash password with SHA-256
-          var hash = sjcl.codec.hex.fromBits(sjcl.hash.sha256.hash(inputPasswordFieldValue));
-          
-          // Send registration information to the server.
-          $.ajax(
+          type: "POST",
+          url: "http://142.93.253.171:8080/register",
+          data: JSON.stringify(
           {
-            type: "POST",
-            url: "http://142.93.253.171:8080/register",
-            data: JSON.stringify(
+            "email": inputEmailFieldValue,
+            "password": hash,
+            "firstname": inputFirstNameFieldValue,
+            "lastname": inputLastNameFieldValue
+          }),
+          dataType: "json",
+          success: function (data, textStatus, jqXHR)
+          {
+            $("#connectionFailedAlert").hide();
+            
+            if (typeof data.token !== "undefined")
             {
-              "email": inputEmailFieldValue,
-              "password": hash,
-              "firstname": inputFirstNameFieldValue,
-              "lastname": inputLastNameFieldValue
-            }),
-            dataType: "json",
-            success: function (data, textStatus, jqXHR)
-            {
-              $("#connectionFailedAlert").hide();
-              
-              if (typeof data.token !== "undefined")
-              {
-                document.cookie = "token=" + data.token;
-                window.location.href = "login.html";
-              }
-            },
-            error: function (jqXHR, textStatus, errorThrown)
-            {
-              if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
-              {
-                console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
-                location.reload(true);
-              }
-              else
-              {
-                $("#connectionFailedAlert").show();
-              }
+              document.cookie = "token=" + data.token;
+              window.location.href = "login.html";
             }
-          });
-        }
+          },
+          error: function (jqXHR, textStatus, errorThrown)
+          {
+            if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
+            {
+              console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+              location.reload(true);
+            }
+            else
+            {
+              $("#connectionFailedAlert").show();
+            }
+          }
+        });
       });
     });
   </script>

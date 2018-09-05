@@ -61,7 +61,10 @@ public interface SessionDao {
                 .toString();
 
         // no session was found for the userId and ip, so create a new one
-        session = new Session(userId, ip, token);
+        session = new Session();
+        session.setIp(ip);
+        session.setToken(token);
+        session.setUserId(userId);
         _insertSession(session);
         return session;
 

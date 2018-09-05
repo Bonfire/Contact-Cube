@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @Data
 public class Session {
 
+    public long userId;
     public String token;
     public String ip;
-    public long userId;
 
 }

@@ -26,7 +26,7 @@ public class DashboardHandler extends AbstractHandler {
     }
 
     /**
-     * Handle POST requests to the registration handler
+     * Handle POST requests to the dashboard handler
      *
      * @param req      the servlet request
      * @param response the response

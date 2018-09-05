@@ -60,13 +60,13 @@ public abstract class AbstractHandler extends HttpServlet {
     private void respond(final HttpServletResponse response, final int opcode, final JsonObject payload) throws IOException {
         response.setStatus(opcode);
         response.getWriter().write(payload.toString());
+        log.info("status: " + opcode + ", payload: " + payload.toString());
         response.getWriter().flush();
     }
 
     void error(final HttpServletResponse response, final int opcode, final String message) throws IOException {
         final JsonObject payload = new JsonObject();
         payload.addProperty("error", message);
-        log.info(payload.toString());
         respond(response, opcode, payload);
     }
 

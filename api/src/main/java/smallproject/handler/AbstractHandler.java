@@ -59,6 +59,7 @@ public abstract class AbstractHandler extends HttpServlet {
 
     private void respond(final HttpServletResponse response, final int opcode, final JsonObject payload) throws IOException {
         response.setStatus(opcode);
+        response.addHeader("Access-Control-Allow-Origin", "*");
         response.getWriter().write(payload.toString());
         log.info("status: " + opcode + ", payload: " + payload.toString());
         response.getWriter().flush();

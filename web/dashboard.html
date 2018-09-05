@@ -85,14 +85,12 @@
                 <div style="margin-bottom: 3%">
                     <form class="form-inline">
                         <div class="form-row">
-                            <div class="form-group col">
-                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addContactModal">Add Contact</button>
+                            <div class="form-group col-6">
+                                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#addContactModal">Add Contact</button>
+                                    <button type="button" class="btn btn-danger disabled" id="removeContactButton">Remove Contact</button>
                             </div>
                             <div class="form-group col-6">
-                                <input type="text" class="form-control float-center" id="inputFilter" placeholder="Filter">
-                            </div>
-                            <div class="form-group col">
-                                <button type="button" class="btn btn-danger float-right">Remove Contact</button>
+                                <input type="text" class="form-control" placeholder="Filter">
                             </div>
                         </div>
                     </form>
@@ -103,7 +101,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="newContactLabel">Add New Contact</h5>
+                                <h5 class="modal-title" id="newContactLabel">Contact Window</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -198,9 +196,9 @@
                                     </div>
                                 </form>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
+                            <div class="modal-footer d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close Window</button>
+                                <button type="button" class="btn btn-primary">Save Changes</button>
                             </div>
                         </div>
                     </div>
@@ -218,6 +216,7 @@
                                 <th scope="col">City</th>
                                 <th scope="col">State</th>
                                 <th scope="col">Zipcode</th>
+                                <th scope="col">Select</th> <!-- This is for the check box -->
                             </tr>
                         </thead>
 
@@ -231,6 +230,11 @@
                                 <td>Margate</td>
                                 <td>FL</td>
                                 <td>33063</td>
+                                <td>
+                                    <div style="text-align: center;">
+                                        <input type="checkbox">
+                                    </div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>

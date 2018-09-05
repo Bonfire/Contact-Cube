@@ -64,14 +64,19 @@ public class RegistrationHandler extends AbstractHandler {
                 badRequest(response, ERROR_INVALID_EMAIL);
                 return;
             }
-            // email is a valid email, lets see if it is in use...
-            if (dbi.withExtension(UserDao.class, dao -> dao.lookupEmail(email))) {
-                final JsonObject obj = new JsonObject();
-                obj.addProperty("success", "email is valid");
-                ok(response, obj);
-                return;
-            } else {
-                badRequest(response, "email is already in use");
+            try {
+                // email is a valid email, lets see if it is in use...
+                if (dbi.withExtension(UserDao.class, dao -> dao.lookupEmail(email))) {
+                    final JsonObject obj = new JsonObject();
+                    obj.addProperty("success", "email is valid");
+                    ok(response, obj);
+                    return;
+                } else {
+                    badRequest(response, "email is already in use");
+                    return;
+                }
+            } catch (final Exception e) {
+                error(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
                 return;
             }
         }

@@ -55,7 +55,7 @@ public class RegistrationHandler extends AbstractHandler {
 
         final JsonElement element = new JsonParser().parse(getPayload(req.getReader()));
         if (element == null || !element.isJsonObject()) {
-            error(response, ERROR_DESERIALIZE_FAIL);
+            badRequest(response, ERROR_DESERIALIZE_FAIL);
             return;
         }
 
@@ -66,7 +66,7 @@ public class RegistrationHandler extends AbstractHandler {
             // request was not a registration, but an email check...
             final String email = json.getAsJsonObject().get("email").getAsString();
             if (email == null || email.isEmpty() || !EMAIL_VALIDATOR.isValid(email)) {
-                error(response, ERROR_INVALID_EMAIL);
+                badRequest(response, ERROR_INVALID_EMAIL);
                 return;
             }
             // email is a valid email, lets see if it is in use...
@@ -76,7 +76,7 @@ public class RegistrationHandler extends AbstractHandler {
                 ok(response, obj);
                 return;
             } else {
-                error(response, "email is already in use");
+                badRequest(response, "email is already in use");
                 return;
             }
         }
@@ -87,31 +87,31 @@ public class RegistrationHandler extends AbstractHandler {
             final User registrant = new Gson().fromJson(json, User.class);
             if (registrant == null) {
                 // if the object is null that means deserialization failed...
-                error(response, ERROR_DESERIALIZE_FAIL);
+                badRequest(response, ERROR_DESERIALIZE_FAIL);
                 return;
             }
 
             // validate email address
             if (registrant.email == null || registrant.email.isEmpty() || !EMAIL_VALIDATOR.isValid(registrant.email)) {
-                error(response, ERROR_INVALID_EMAIL);
+                badRequest(response, ERROR_INVALID_EMAIL);
                 return;
             }
 
             // validate password
             if (registrant.password == null || registrant.password.isEmpty()) {
-                error(response, ERROR_INVALID_PASSWORD);
+                badRequest(response, ERROR_INVALID_PASSWORD);
                 return;
             }
 
             // validate first name
             if (registrant.firstname == null || registrant.firstname.isEmpty()) {
-                error(response, ERROR_INVALID_FIRST_NAME);
+                badRequest(response, ERROR_INVALID_FIRST_NAME);
                 return;
             }
 
             // validate last name
             if (registrant.lastname == null || registrant.lastname.isEmpty()) {
-                error(response, ERROR_INVALID_LAST_NAME);
+                badRequest(response, ERROR_INVALID_LAST_NAME);
                 return;
             }
 
@@ -127,7 +127,7 @@ public class RegistrationHandler extends AbstractHandler {
                     if (authenticatedUser == null) {
                         // email exists in the database, but password was wrong, return an error
                         log.warning("Registration failed for user: \"" + registrant.email + "\", user already exists!");
-                        error(response, "user already exists!");
+                        badRequest(response, "user already exists!");
                     } else {
                         // user email already exists... but password is correct, so let's just log them in
                         final SessionDao sessionDao = h.attach(SessionDao.class);
@@ -146,31 +146,6 @@ public class RegistrationHandler extends AbstractHandler {
         } catch (final Throwable t) {
             t.printStackTrace();
         }
-    }
-
-    private void sendSession(HttpServletResponse response, Session session) throws IOException {
-        if (session != null) {
-            log.info("Session sent for user: " + session.getUserId() + ", token: " + session.getToken());
-            final JsonObject payload = new JsonObject();
-            payload.addProperty("token", session.token);
-            ok(response, payload);
-        }
-    }
-
-    private void error(final HttpServletResponse response, final String message) throws IOException {
-        final JsonObject payload = new JsonObject();
-        payload.addProperty("error", message);
-        respond(response, HttpServletResponse.SC_BAD_REQUEST, payload);
-    }
-
-    private void ok(final HttpServletResponse response, final JsonObject payload) throws IOException {
-        respond(response, HttpServletResponse.SC_OK, payload);
-    }
-
-    private void respond(final HttpServletResponse response, final int opcode, final JsonObject payload) throws IOException {
-        response.setStatus(opcode);
-        response.getWriter().write(payload.toString());
-        response.getWriter().flush();
     }
 
 }

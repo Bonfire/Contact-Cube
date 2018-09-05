@@ -26,7 +26,7 @@ public class AdminHandler extends AbstractHandler {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         final String action = req.getParameter("a");
         if (action == null) {
-            error(resp, "bad request");
+            badRequest(resp, "bad request");
             return;
         }
 
@@ -68,26 +68,8 @@ public class AdminHandler extends AbstractHandler {
             }
         }
 
-        resp.setStatus(HttpServletResponse.SC_OK);
-        resp.getWriter().write(obj.toString());
-        resp.getWriter().flush();
+        ok(resp, obj);
 
-    }
-
-    private void error(final HttpServletResponse response, final String message) throws IOException {
-        final JsonObject payload = new JsonObject();
-        payload.addProperty("error", message);
-        respond(response, HttpServletResponse.SC_BAD_REQUEST, payload);
-    }
-
-    private void ok(final HttpServletResponse response, final JsonObject payload) throws IOException {
-        respond(response, HttpServletResponse.SC_OK, payload);
-    }
-
-    private void respond(final HttpServletResponse response, final int opcode, final JsonObject payload) throws IOException {
-        response.setStatus(opcode);
-        response.getWriter().write(payload.toString());
-        response.getWriter().flush();
     }
 
 }

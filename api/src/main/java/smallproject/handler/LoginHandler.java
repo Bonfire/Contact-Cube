@@ -82,35 +82,13 @@ public class LoginHandler extends AbstractHandler {
                     badRequest(response, "unable to create session");
                     return;
                 }
-                final JsonObject payload = new JsonObject();
-                payload.addProperty("token", session.token);
-                ok(response, payload);
+                sendSession(response, session);
             }
         } catch (final Exception e) {
             e.printStackTrace();
             error(response, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
-    }
-
-    private void badRequest(final HttpServletResponse response, final String message) throws IOException {
-        error(response, HttpServletResponse.SC_BAD_REQUEST, message);
-    }
-
-    private void error(final HttpServletResponse response, final int opcode, final String message) throws IOException {
-        final JsonObject payload = new JsonObject();
-        payload.addProperty("error", message);
-        respond(response, opcode, payload);
-    }
-
-    private void ok(final HttpServletResponse response, final JsonObject payload) throws IOException {
-        respond(response, HttpServletResponse.SC_OK, payload);
-    }
-
-    private void respond(final HttpServletResponse response, final int opcode, final JsonObject payload) throws IOException {
-        response.setStatus(opcode);
-        response.getWriter().write(payload.toString());
-        response.getWriter().flush();
     }
 
 }

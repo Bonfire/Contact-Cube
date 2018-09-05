@@ -1,6 +1,13 @@
 package smallproject.dao;
 
+import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.customizer.BindFields;
+import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
+import smallproject.model.Contact;
+import smallproject.model.User;
+
+import java.util.List;
 
 /**
  * @author Matthew
@@ -26,5 +33,9 @@ public interface ContactDao {
             "  CONSTRAINT `contacts_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`id`)\n" +
             ") ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4")
     void createTable();
+
+    @SqlQuery("SELECT * FROM contacts WHERE userId = ?")
+    @RegisterBeanMapper(Contact.class)
+    List<Contact> getContactsForUserId(final long userId);
 
 }

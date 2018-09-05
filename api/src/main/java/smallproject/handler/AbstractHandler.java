@@ -66,7 +66,7 @@ public abstract class AbstractHandler extends HttpServlet {
 
     void sendSession(HttpServletResponse response, Session session) throws IOException {
         if (session != null) {
-            log.info("Session sent for user: " + session.getUserId() + ", token: " + session.getToken());
+            log.info("Session sent for user: " + session.userId + ", token: " + session.token);
             final JsonObject payload = new JsonObject();
             payload.addProperty("token", session.token);
             ok(response, payload);

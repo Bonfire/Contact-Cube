@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'net.ltgt.apt' version '0.10'
 }
 
 group 'small-project'
@@ -30,6 +31,7 @@ dependencies {
     compile 'commons-validator:commons-validator:1.6'
     // lombok
     compileOnly 'org.projectlombok:lombok:1.18.2'
+    apt "org.projectlombok:lombok:1.18.2"
 }
 
 jar {

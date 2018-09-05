@@ -34,12 +34,6 @@ public class RegistrationHandler extends AbstractHandler {
         super(dbi);
     }
 
-    public static void main(String[] args) {
-
-        System.out.println(EMAIL_VALIDATOR.isValid("ajjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj@bjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj.co"));
-
-    }
-
     /**
      * Handle POST requests to the registration handler
      *

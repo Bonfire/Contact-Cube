@@ -60,6 +60,27 @@
       {
         $(document).on("keyup", "#inputFilter", filterContent);
         
+        // Enables registration when all forms are valid.  On 'keyup' for responsiveness.
+        $(document).keyup(function ()
+        {
+          var inputFirstNameFieldValid = document.getElementById("inputFirstName").checkValidity();
+          var inputLastNameFieldValid = document.getElementById("inputLastName").checkValidity();
+          var inputPhoneNumberFieldValid = document.getElementById("inputPhoneNumber").checkValidity();
+          var inputAddressFieldValid = document.getElementById("inputAddress").checkValidity();
+          var inputCityFieldValid = document.getElementById("inputCity").checkValidity();
+          var inputStateFieldValid = document.getElementById("inputState").checkValidity();
+          var inputZipcodeFieldValid = document.getElementById("inputZipcode").checkValidity();
+          
+          if (inputFirstNameFieldValid && inputLastNameFieldValid && inputPhoneNumberFieldValid && inputAddressFieldValid && inputCityFieldValid && inputStateFieldValid && inputZipcodeFieldValid)
+          {
+            $('#buttonAddContact').prop('disabled', false);
+          }
+          else
+          {
+            $('#buttonAddContact').prop('disabled', true);
+          }
+        });
+        
         $("#buttonSignOut").click(function ()
         {
           $.ajax(
@@ -104,8 +125,7 @@
     <nav class="navbar navbar-light bg-light">
         <a class="navbar-brand">Contact Manager</a>
         <form class="form-inline">
-
-        <button type="button" class="btn btn-primary mr-2 my-sm-0" id="buttonSignOut">Sign Out</button>
+          <button type="button" class="btn btn-primary mr-2 my-sm-0" id="buttonSignOut">Sign Out</button>
         </form>
     </nav>
 
@@ -157,8 +177,8 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="inputPhone">Phone Number</label>
-                                        <input type="text" class="form-control" id="inputPhone" placeholder="1234567890" required>
+                                        <label for="inputPhoneNumber">Phone Number</label>
+                                        <input type="text" class="form-control" id="inputPhoneNumber" placeholder="1234567890" required>
                                     </div>
                                     <div class="form-group">
                                         <label for="inputAddress">Address</label>
@@ -236,7 +256,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-primary">Save changes</button>
+                                <button type="button" class="btn btn-primary" id="buttonAddContact" disabled=true>Save changes</button>
                             </div>
                         </div>
                     </div>

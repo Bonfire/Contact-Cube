@@ -66,7 +66,7 @@ public class RegistrationHandler extends AbstractHandler {
             }
             try {
                 // email is a valid email, lets see if it is in use...
-                if (dbi.withExtension(UserDao.class, dao -> dao.lookupEmail(email))) {
+                if (!dbi.withExtension(UserDao.class, dao -> dao.lookupEmail(email))) {
                     final JsonObject obj = new JsonObject();
                     obj.addProperty("success", "email is valid");
                     ok(response, obj);

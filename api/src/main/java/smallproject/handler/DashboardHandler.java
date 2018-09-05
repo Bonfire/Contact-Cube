@@ -54,6 +54,14 @@ public class DashboardHandler extends AbstractHandler {
             return;
         }
 
+        // token was provided, lets make sure it is valid...
+        final String token = json.get("token").getAsString();
+        if (token == null || token.isEmpty() || token.length() != 64) {
+            badRequest(response, "invalid token received!");
+            return;
+        }
+
+        // everything was good, but we don't do anything yet
         final JsonObject payload = new JsonObject();
         payload.addProperty("status", "not implemented yet!");
         ok(response, payload);

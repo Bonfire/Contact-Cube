@@ -38,4 +38,8 @@ public interface ContactDao {
     @RegisterBeanMapper(Contact.class)
     List<Contact> getContactsForUserId(final long userId);
 
+    @SqlUpdate("INSERT INTO contacts (firstName, lastName, address, city, state, zip, phone, email, userID) " +
+            "VALUES (:firstName, :lastName, :address, :city, :state, :zip, :phone, :email, :userId)")
+    void addContact(@BindFields final Contact contact);
+
 }

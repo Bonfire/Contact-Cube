@@ -23,6 +23,8 @@ import java.util.logging.Logger;
  */
 public abstract class AbstractHandler extends HttpServlet {
 
+    static final String KEY_SUCCESS = "success";
+
     // GSON singleton to be used by every handler for deserialization/serialization of JSON
     static final Gson gson = new Gson();
 

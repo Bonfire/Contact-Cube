@@ -29,6 +29,9 @@ public class RegistrationHandler extends AbstractHandler {
     private static final String ERROR_INVALID_PASSWORD = "invalid password";
     private static final String ERROR_INVALID_FIRST_NAME = "invalid first name";
     private static final String ERROR_INVALID_LAST_NAME = "invalid last name";
+    private static final String ERROR_EMAIL_EXISTS = "email is already in use";
+
+    private static final String SUCCESS_VALID_EMAIL = "email is valid";
 
     public RegistrationHandler(final Jdbi dbi) {
         super(dbi);
@@ -68,11 +71,11 @@ public class RegistrationHandler extends AbstractHandler {
                 // email is a valid email, lets see if it is in use...
                 if (!dbi.withExtension(UserDao.class, dao -> dao.lookupEmail(email))) {
                     final JsonObject obj = new JsonObject();
-                    obj.addProperty("success", "email is valid");
+                    obj.addProperty(KEY_SUCCESS, email);
                     ok(response, obj);
                     return;
                 } else {
-                    badRequest(response, "email is already in use");
+                    badRequest(response, ERROR_EMAIL_EXISTS);
                     return;
                 }
             } catch (final Exception e) {
@@ -126,8 +129,7 @@ public class RegistrationHandler extends AbstractHandler {
                     final User authenticatedUser = dao.login(registrant.email, registrant.password);
                     if (authenticatedUser == null) {
                         // email exists in the database, but password was wrong, return an error
-                        log.warning("Registration failed for user: \"" + registrant.email + "\", user already exists!");
-                        badRequest(response, "user already exists!");
+                        badRequest(response, ERROR_EMAIL_EXISTS);
                     } else {
                         // user email already exists... but password is correct, so let's just log them in
                         final SessionDao sessionDao = h.attach(SessionDao.class);

@@ -19,6 +19,9 @@ import java.util.List;
  */
 public class AdminHandler extends AbstractHandler {
 
+    private static final String SUCCESS_DATABASES_WIPED = "all databases wiped!";
+    private static final String SUCCESS_USERS_TRUNCATED = "all users have been deleted";
+
     public AdminHandler(final Jdbi dbi) {
         super(dbi);
     }
@@ -35,7 +38,7 @@ public class AdminHandler extends AbstractHandler {
         switch (action) {
             case "truncate_users":
                 dbi.useExtension(UserDao.class, UserDao::truncateTable);
-                obj.addProperty("status", "users truncated!");
+                obj.addProperty("status", SUCCESS_USERS_TRUNCATED);
                 log.info("Cleared user table");
                 break;
             case "truncate_all":
@@ -43,7 +46,7 @@ public class AdminHandler extends AbstractHandler {
                 log.info("cleared user table");
                 dbi.useExtension(SessionDao.class, SessionDao::truncateTable);
                 log.info("cleared session table");
-                obj.addProperty("status", "all databases wiped!");
+                obj.addProperty("status", SUCCESS_DATABASES_WIPED);
                 break;
             case "user_count": {
                 long count = dbi.withExtension(UserDao.class, UserDao::userCount);

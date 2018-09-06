@@ -44,4 +44,7 @@ public interface ContactDao {
     @GetGeneratedKeys("id")
     long addContact(@BindFields final Contact contact);
 
+    @SqlUpdate("DELETE FROM contacts WHERE id = ? AND userId = ?")
+    boolean removeContact(final int uid, final long userId);
+
 }

@@ -1,5 +1,6 @@
 package smallproject.handler;
 
+import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Matthew
@@ -92,9 +94,37 @@ public class DashboardHandler extends AbstractHandler {
                     }
                     contact.setUserId(userId);
                     long id = dbi.withExtension(ContactDao.class, dao -> dao.addContact(contact));
-                    payload.addProperty("status", "contact added");
+                    payload.addProperty("success", "contact added");
                     payload.addProperty("id", id);
                     break;
+                case "remove_contacts":
+                    if (!json.has("ids"))  {
+                        badRequest(response, "no 'ids' key found in the JSON payload");
+                        return;
+                    }
+                    final JsonElement _array = json.get("ids");
+                    if (!_array.isJsonArray()) {
+                        badRequest(response, "key 'ids' is not a JSON array");
+                        return;
+                    }
+                    final JsonArray ids = _array.getAsJsonArray();
+                    final Set<Integer> failed = Sets.newHashSet();
+                    ids.forEach(e -> {
+                        final String str = e.getAsString();
+                        if (str != null && !str.isEmpty()) {
+                            try {
+                                final int uid = Integer.parseInt(str);
+                                if (!dbi.withExtension(ContactDao.class, dao -> dao.removeContact(uid, userId)))
+                                    failed.add(uid);
+                            } catch (final Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
+                    payload.addProperty("success",
+                            failed.isEmpty() ? "all contacts removed" : "some UIDs couldn't be removed");
+                    break;
+
             }
 
             ok(response, payload);

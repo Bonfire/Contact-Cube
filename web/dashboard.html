@@ -124,7 +124,7 @@
                   contact_list[key].city,
                   contact_list[key].state,
                   contact_list[key].zip,
-                  "<div style=\"text-align: center;\"><input type=\"checkbox\" onchange=\"toggleDeleteContact(this)\"></div></td>"
+                  "<div style=\"text-align: center;\"><input id=\"" + contact_list[key].userId + "\" type=\"checkbox\" onchange=\"toggleDeleteContact(this)\"></div></td>"
                 ]).draw();
               }
             }
@@ -265,7 +265,7 @@
                   inputCityFieldValue,
                   inputStateFieldValue,
                   inputZipcodeFieldValue,
-                  "<div style=\"text-align: center;\"><input type=\"checkbox\" onclick=\"toggleDeleteContact('" + data.userId + "')\"></div></td>"
+                  "<div style=\"text-align: center;\"><input id=\"" + data.userId + "\" type=\"checkbox\" onchange=\"toggleDeleteContact(this)\"></div></td>"
                 ]).draw();
               }
             },
@@ -292,7 +292,58 @@
         // Remove contacts from list.
         $("#removeContactButton").click(function ()
         {
+          var userids = new Array();
           
+          for (var i=0; i<deleteContactObjects.length; i++)
+          {
+            userids.push($(deleteContactObjects[i]).attr("id"));
+          }
+        
+          $.ajax(
+          {
+            type: "POST",
+            url: "http://142.93.253.171:8080/dashboard",
+            data: JSON.stringify(
+            {
+              "token": token,
+              "action": "remove_contacts",
+              "userids": userids
+            }),
+            dataType: "json",
+            success: function (data, textStatus, jqXHR)
+            {
+              $("#serverErrorAlert").hide();
+              $("#connectionFailedAlert").hide();
+            
+              if (typeof data.success !== "undefined")
+              {
+                for (var i=0; i<deleteContactObjects.length; i++)
+                {
+                  contactTable.row($(deleteContactObjects[i]).parents("tr")).remove().draw();
+                }
+                
+                checkboxSelectedCounter = 0;
+                deleteContactObjects = new Array();
+                
+                $('#removeContactButton').addClass('disabled');
+              }
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+              if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
+              {
+                console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+                document.getElementById("serverErrorAlert").innerHTML = jqXHR.responseJSON.error;
+                $("#connectionFailedAlert").hide();
+                $("#serverErrorAlert").show();
+              }
+              else
+              {
+                $("#serverErrorAlert").hide();
+                $("#connectionFailedAlert").show();
+              }
+            }
+          });
         });
       });
     </script>

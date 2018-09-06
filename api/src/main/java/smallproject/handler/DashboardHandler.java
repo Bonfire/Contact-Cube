@@ -84,6 +84,17 @@ public class DashboardHandler extends AbstractHandler {
                     payload.add("contacts", array);
                     payload.addProperty("success", "contacts retrieved");
                     break;
+                case "add_contact":
+                    final Contact contact = gson.fromJson(json, Contact.class);
+                    if (contact == null) {
+                        badRequest(response, "Unable to contruct contact object from JSON payload");
+                        return;
+                    }
+                    contact.setUserId(userId);
+                    long id = dbi.withExtension(ContactDao.class, dao -> dao.addContact(contact));
+                    payload.addProperty("status", "contact added");
+                    payload.addProperty("id", id);
+                    break;
             }
 
             ok(response, payload);

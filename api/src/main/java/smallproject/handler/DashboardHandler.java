@@ -124,7 +124,10 @@ public class DashboardHandler extends AbstractHandler {
                     payload.addProperty("success",
                             failed.isEmpty() ? "all contacts removed" : "some UIDs couldn't be removed");
                     break;
-
+                case "logout":
+                    dbi.useExtension(SessionDao.class, dao -> dao.logout(userId, token));
+                    payload.addProperty("success", "logged out");
+                    break;
             }
 
             ok(response, payload);

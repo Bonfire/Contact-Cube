@@ -3,6 +3,7 @@ package smallproject.dao;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindFields;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
@@ -33,6 +34,9 @@ public interface SessionDao {
 
     @SqlQuery("SELECT userId FROM sessions WHERE ip = ? AND token = ?")
     long userIdForSession(final String ip, final String token);
+
+    @SqlUpdate("DELETE FROM sessions WHERE userId = ? AND token = ?")
+    void logout(final long userId, final String token);
 
     /**
      * Creates a session for the provided user

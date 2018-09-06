@@ -12,11 +12,12 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp" crossorigin="anonymous"></script>
+    
     <script type="application/javascript">
       var token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
     
-      // Missing token redirect
+      // Missing token redirect.
       if (token === "")
       {
         window.location.href = "login.html";
@@ -30,13 +31,13 @@
         var tr = contacts.getElementsByTagName('tr');
         var td, row_contains_filter;
 
-        // Only show rows that match the filter
+        // Only show rows that match the filter.
         for (var i = 0; i < tr.length; i++)
         {
           td = tr[i].getElementsByTagName("td");
           row_contains_filter = false;
           
-          // Search for match in each column
+          // Search for match in each column.
           for (var j = 0; j < td.length; j++)
           {
             if (td[j].innerHTML.replace(/[^0-9a-z]/gi, '').toUpperCase().indexOf(filter) > -1)
@@ -46,7 +47,7 @@
             }
           }
           
-          // Show/hide rows
+          // Show/hide rows.
           if (row_contains_filter)
           {
             tr[i].style.display = "";
@@ -58,8 +59,13 @@
       
       $(document).ready(function ()
       {
-        var contact_list;
-        
+        var contactTable = $('#dataTable').DataTable(
+        {
+          "paging": false,
+          "searching": false,
+          "info": false
+        });
+      
         // Retrieve contacts.
         $.ajax(
         {
@@ -78,7 +84,22 @@
           
             if (typeof data.success !== "undefined")
             {
-              contact_list = data;
+              var contact_list = data.contacts;
+              
+              for (var key in contact_list)
+              {
+                contactTable.row.add(
+                [
+                  contact_list[key].firstName,
+                  contact_list[key].lastName,
+                  contact_list[key].phone.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'),
+                  contact_list[key].address,
+                  contact_list[key].city,
+                  contact_list[key].state,
+                  contact_list[key].zip,
+                  "<div style=\"text-align: center;\"><input type=\"checkbox\" onclick=\"toggleDeleteContact('" + contact_list[key].userId + "')\"></div></td>"
+                ]).draw();
+              }
             }
           },
           error: function (jqXHR, textStatus, errorThrown)
@@ -97,26 +118,6 @@
             }
           }
         });
-        
-        var table_text = "";
-        var counter = 1;
-        
-        // If retrieved, build table.
-        if (typeof contact_list !== "undefined")
-        {
-          for (key in contact_list)
-          {
-            if (key !== "success")
-            {
-              table_text += "<tr><th scope=\"row\">" + counter + "</th><td>" + contact_list[key].firstname + "</td><td>" + contact_list[key].lastname + "</td><td>" + contact_list[key].phonenumber.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') + "</td><td>" + contact_list[key].address + "</td><td>" + contact_list[key].city + "</td><td>" + contact_list[key].state + "</td><td>" + contact_list[key].zipcode + "</td></tr>";
-            }
-            
-            counter++;
-          }
-          
-          document.getElementById("tableContacts").innerHTML = table_text;
-        }
-        
         
         
         
@@ -146,7 +147,7 @@
           }
         });
         
-        // Reset all fields when modal disappears
+        // Reset all fields when modal disappears.
         $('#addContactModal').on('hidden.bs.modal', function () {
           document.getElementById("formAddContact").reset();
         });
@@ -193,16 +194,16 @@
           });
         });
         
-        // Add contact to list. (server and client)
+        // Add contact to list.
         $("#addContactButton").click(function ()
         {
-          var inputFirstNameField = document.getElementById("inputFirstName");
-          var inputLastNameField = document.getElementById("inputLastName");
-          var inputPhoneNumberField = document.getElementById("inputPhoneNumber");
-          var inputAddressField = document.getElementById("inputAddress");
-          var inputCityField = document.getElementById("inputCity");
-          var inputStateField = document.getElementById("inputState");
-          var inputZipcodeField = document.getElementById("inputZipcode");
+          var inputFirstNameFieldValue = document.getElementById("inputFirstName").value.replace(/[^a-z]/gi, '');
+          var inputLastNameFieldValue = document.getElementById("inputLastName").value.replace(/[^a-z]/gi, '');
+          var inputPhoneNumberFieldValue = document.getElementById("inputPhoneNumber").value.replace(/[^0-9]/gi, '');
+          var inputAddressFieldValue = document.getElementById("inputAddress").value.replace(/[^0-9a-z]/gi, '');
+          var inputCityFieldValue = document.getElementById("inputCity").value.replace(/[^a-z]/gi, '');
+          var inputStateFieldValue = document.getElementById("inputState").value.replace(/[^a-z]/gi, '');
+          var inputZipcodeFieldValue = document.getElementById("inputZipcode").value.replace(/[^0-9]/gi, '');
         
           $.ajax(
           {
@@ -211,13 +212,14 @@
             data: JSON.stringify(
             {
               "token": token,
-              "firstname": inputFirstNameField.value.replace(/[^a-z]/gi, ''),
-              "lastname": inputLastNameField.value.replace(/[^a-z]/gi, ''),
-              "phonenumber": inputPhoneNumberField.value.replace(/[^0-9]/gi, ''),
-              "address": inputAddressField.value.replace(/[^0-9a-z]/gi, ''),
-              "city": inputCityField.value.replace(/[^a-z]/gi, ''),
-              "state": inputStateField.value.replace(/[^a-z]/gi, ''),
-              "zipcode": inputZipcodeField.value.replace(/[^0-9]/gi, '')
+              "action": "add_contact",
+              "firstname": inputFirstNameFieldValue,
+              "lastname": inputLastNameFieldValue,
+              "phonenumber": inputPhoneNumberFieldValue,
+              "address": inputAddressFieldValue,
+              "city": inputCityFieldValue,
+              "state": inputStateFieldValue,
+              "zipcode": inputZipcodeFieldValue
             }),
             dataType: "json",
             success: function (data, textStatus, jqXHR)
@@ -227,7 +229,17 @@
             
               if (typeof data.success !== "undefined")
               {
-                // add contact to client
+                contactTable.row.add(
+                [
+                  inputFirstNameFieldValue,
+                  inputLastNameFieldValue,
+                  inputPhoneNumberFieldValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'),
+                  inputAddressFieldValue,
+                  inputCityFieldValue,
+                  inputStateFieldValue,
+                  inputZipcodeFieldValue,
+                  "<div style=\"text-align: center;\"><input type=\"checkbox\" onclick=\"toggleDeleteContact('" + data.userId + "')\"></div></td>"
+                ]).draw();
               }
             },
             error: function (jqXHR, textStatus, errorThrown)
@@ -250,7 +262,7 @@
           $("#addContactModal").modal('hide');
         });
         
-        // Add contact to list. (server and client)
+        // Remove contacts from list.
         $("#removeContactButton").click(function ()
         {
           
@@ -406,10 +418,9 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table id="dataTable" class="table table-bordered">
                         <thead>
                             <tr>
-                                <th scope="col">#</th>
                                 <th scope="col">First</th>
                                 <th scope="col">Last</th>
                                 <th scope="col">Phone</th>
@@ -422,21 +433,7 @@
                         </thead>
 
                         <tbody id="tableContacts">
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>John</td>
-                                <td>Williams</td>
-                                <td>(954) 972-5652</td>
-                                <td>51 Green Bush Ave</td>
-                                <td>Margate</td>
-                                <td>FL</td>
-                                <td>33063</td>
-                                <td>
-                                    <div style="text-align: center;">
-                                        <input type="checkbox">
-                                    </div>
-                                </td>
-                            </tr>
+                            <!-- Table generated here -->
                         </tbody>
                     </table>
                 </div>

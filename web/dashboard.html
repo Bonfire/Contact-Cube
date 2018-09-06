@@ -12,7 +12,8 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp" crossorigin="anonymous"></script>
+    
     <script type="application/javascript">
       var token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
     
@@ -58,6 +59,13 @@
       
       $(document).ready(function ()
       {
+        var contactTable = $('#dataTable').DataTable(
+        {
+          "paging": false,
+          "searching": false,
+          "info": false
+        });
+      
         // Retrieve contacts.
         $.ajax(
         {
@@ -83,11 +91,20 @@
               
               for (var key in contact_list)
               {
-                table_text += "<tr><th scope=\"row\">" + counter + "</th><td>" + contact_list[key].firstName + "</td><td>" + contact_list[key].lastName + "</td><td>" + contact_list[key].phone.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3') + "</td><td>" + contact_list[key].address + "</td><td>" + contact_list[key].city + "</td><td>" + contact_list[key].state + "</td><td>" + contact_list[key].zip + "</td><td><div style=\"text-align: center;\"><input type=\"checkbox\" onclick=\"toggleDeleteContact('" + contact_list[key].userId + "', '" + counter + "')\"></div></td></tr>";
+                contactTable.row.add(
+                [
+                  contact_list[key].firstName,
+                  contact_list[key].lastName,
+                  contact_list[key].phone.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'),
+                  contact_list[key].address,
+                  contact_list[key].city,
+                  contact_list[key].state,
+                  contact_list[key].zip,
+                  "<div style=\"text-align: center;\"><input type=\"checkbox\" onclick=\"toggleDeleteContact('" + contact_list[key].userId + "', '" + counter + "')\"></div></td>"
+                ]).draw();
+                
                 counter++;
               }
-              
-              document.getElementById("tableContacts").innerHTML = table_text;
             }
           },
           error: function (jqXHR, textStatus, errorThrown)
@@ -106,7 +123,6 @@
             }
           }
         });
-        
         
         
         
@@ -397,10 +413,9 @@
                 </div>
 
                 <div class="table-responsive">
-                    <table class="table table-bordered">
+                    <table id="dataTable" class="table table-bordered">
                         <thead>
                             <tr>
-                                <th scope="col">#</th>
                                 <th scope="col">First</th>
                                 <th scope="col">Last</th>
                                 <th scope="col">Phone</th>

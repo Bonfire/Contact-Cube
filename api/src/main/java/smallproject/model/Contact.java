@@ -14,6 +14,6 @@ public class Contact {
     public String address, city, state, zip;
     public String phone;
     public String email;
-    public int userId;
+    public long userId;
 
 }

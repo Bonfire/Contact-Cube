@@ -27,7 +27,7 @@
       var key_value = url_vars.split("&")[0].split("=");
       
       // Signed out alert. (Redirect from dashboard)
-      if (key_value[0] === "signedout" && key_value[1] === "1")
+      if (key_value[0] === "logout" && key_value[1] === "1")
       {
         $("#signedOutAlert").show();
       }

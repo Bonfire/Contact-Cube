@@ -15,6 +15,8 @@
     <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp" crossorigin="anonymous"></script>
     
     <script type="application/javascript">
+      var checkboxSelectedCounter = 0;
+      var deleteContactObjects = new Array();
       var token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
     
       // Missing token redirect.
@@ -53,6 +55,31 @@
             tr[i].style.display = "";
           } else {
             tr[i].style.display = "none";
+          }
+        }
+      }
+      
+      function toggleDeleteContact(obj)
+      {
+        if ($(obj).is(":checked"))
+        {
+          deleteContactObjects.push(obj);
+          checkboxSelectedCounter++;
+          $('#removeContactButton').removeClass('disabled');
+        }
+        else
+        {
+          var index = deleteContactObjects.indexOf(obj);
+          
+          if (index !== -1)
+          {
+            deleteContactObjects.splice(index, 1);
+            checkboxSelectedCounter--;
+            
+            if (checkboxSelectedCounter === 0)
+            {
+              $('#removeContactButton').addClass('disabled');
+            }
           }
         }
       }
@@ -97,7 +124,7 @@
                   contact_list[key].city,
                   contact_list[key].state,
                   contact_list[key].zip,
-                  "<div style=\"text-align: center;\"><input type=\"checkbox\" onclick=\"toggleDeleteContact('" + contact_list[key].userId + "')\"></div></td>"
+                  "<div style=\"text-align: center;\"><input type=\"checkbox\" onchange=\"toggleDeleteContact(this)\"></div></td>"
                 ]).draw();
               }
             }

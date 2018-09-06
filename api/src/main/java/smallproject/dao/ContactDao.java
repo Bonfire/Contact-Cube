@@ -2,6 +2,7 @@ package smallproject.dao;
 
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.customizer.BindFields;
+import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import smallproject.model.Contact;
@@ -40,6 +41,7 @@ public interface ContactDao {
 
     @SqlUpdate("INSERT INTO contacts (firstName, lastName, address, city, state, zip, phone, email, userID) " +
             "VALUES (:firstName, :lastName, :address, :city, :state, :zip, :phone, :email, :userId)")
-    void addContact(@BindFields final Contact contact);
+    @GetGeneratedKeys("id")
+    long addContact(@BindFields final Contact contact);
 
 }

@@ -177,6 +177,7 @@
         // Reset all fields when modal disappears.
         $('#addContactModal').on('hidden.bs.modal', function () {
           document.getElementById("formAddContact").reset();
+          $('#addContactButton').prop('disabled', true);
         });
         
         // Signs a user out of their account.

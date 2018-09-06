@@ -124,7 +124,7 @@
                   contact_list[key].city,
                   contact_list[key].state,
                   contact_list[key].zip,
-                  "<div style=\"text-align: center;\"><input id=\"" + contact_list[key].userId + "\" type=\"checkbox\" onchange=\"toggleDeleteContact(this)\"></div></td>"
+                  "<div style=\"text-align: center;\"><input id=\"" + contact_list[key].id + "\" type=\"checkbox\" onchange=\"toggleDeleteContact(this)\"></div></td>"
                 ]).draw();
               }
             }
@@ -240,13 +240,13 @@
             {
               "token": token,
               "action": "add_contact",
-              "firstname": inputFirstNameFieldValue,
-              "lastname": inputLastNameFieldValue,
-              "phonenumber": inputPhoneNumberFieldValue,
+              "firstName": inputFirstNameFieldValue,
+              "lastName": inputLastNameFieldValue,
+              "phone": inputPhoneNumberFieldValue,
               "address": inputAddressFieldValue,
               "city": inputCityFieldValue,
               "state": inputStateFieldValue,
-              "zipcode": inputZipcodeFieldValue
+              "zip": inputZipcodeFieldValue
             }),
             dataType: "json",
             success: function (data, textStatus, jqXHR)
@@ -265,7 +265,7 @@
                   inputCityFieldValue,
                   inputStateFieldValue,
                   inputZipcodeFieldValue,
-                  "<div style=\"text-align: center;\"><input id=\"" + data.userId + "\" type=\"checkbox\" onchange=\"toggleDeleteContact(this)\"></div></td>"
+                  "<div style=\"text-align: center;\"><input id=\"" + data.id + "\" type=\"checkbox\" onchange=\"toggleDeleteContact(this)\"></div></td>"
                 ]).draw();
               }
             },
@@ -307,7 +307,7 @@
             {
               "token": token,
               "action": "remove_contacts",
-              "userids": userids
+              "ids": userids
             }),
             dataType: "json",
             success: function (data, textStatus, jqXHR)

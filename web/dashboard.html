@@ -86,9 +86,6 @@
             {
               var contact_list = data.contacts;
               
-              var table_text = "";
-              var counter = 1;
-              
               for (var key in contact_list)
               {
                 contactTable.row.add(
@@ -100,10 +97,8 @@
                   contact_list[key].city,
                   contact_list[key].state,
                   contact_list[key].zip,
-                  "<div style=\"text-align: center;\"><input type=\"checkbox\" onclick=\"toggleDeleteContact('" + contact_list[key].userId + "', '" + counter + "')\"></div></td>"
+                  "<div style=\"text-align: center;\"><input type=\"checkbox\" onclick=\"toggleDeleteContact('" + contact_list[key].userId + "')\"></div></td>"
                 ]).draw();
-                
-                counter++;
               }
             }
           },
@@ -199,16 +194,16 @@
           });
         });
         
-        // Add contact to list. (server and client)
+        // Add contact to list.
         $("#addContactButton").click(function ()
         {
-          var inputFirstNameField = document.getElementById("inputFirstName");
-          var inputLastNameField = document.getElementById("inputLastName");
-          var inputPhoneNumberField = document.getElementById("inputPhoneNumber");
-          var inputAddressField = document.getElementById("inputAddress");
-          var inputCityField = document.getElementById("inputCity");
-          var inputStateField = document.getElementById("inputState");
-          var inputZipcodeField = document.getElementById("inputZipcode");
+          var inputFirstNameFieldValue = document.getElementById("inputFirstName").value.replace(/[^a-z]/gi, '');
+          var inputLastNameFieldValue = document.getElementById("inputLastName").value.replace(/[^a-z]/gi, '');
+          var inputPhoneNumberFieldValue = document.getElementById("inputPhoneNumber").value.replace(/[^0-9]/gi, '');
+          var inputAddressFieldValue = document.getElementById("inputAddress").value.replace(/[^0-9a-z]/gi, '');
+          var inputCityFieldValue = document.getElementById("inputCity").value.replace(/[^a-z]/gi, '');
+          var inputStateFieldValue = document.getElementById("inputState").value.replace(/[^a-z]/gi, '');
+          var inputZipcodeFieldValue = document.getElementById("inputZipcode").value.replace(/[^0-9]/gi, '');
         
           $.ajax(
           {
@@ -218,13 +213,13 @@
             {
               "token": token,
               "action": "add_contact",
-              "firstname": inputFirstNameField.value.replace(/[^a-z]/gi, ''),
-              "lastname": inputLastNameField.value.replace(/[^a-z]/gi, ''),
-              "phonenumber": inputPhoneNumberField.value.replace(/[^0-9]/gi, ''),
-              "address": inputAddressField.value.replace(/[^0-9a-z]/gi, ''),
-              "city": inputCityField.value.replace(/[^a-z]/gi, ''),
-              "state": inputStateField.value.replace(/[^a-z]/gi, ''),
-              "zipcode": inputZipcodeField.value.replace(/[^0-9]/gi, '')
+              "firstname": inputFirstNameFieldValue,
+              "lastname": inputLastNameFieldValue,
+              "phonenumber": inputPhoneNumberFieldValue,
+              "address": inputAddressFieldValue,
+              "city": inputCityFieldValue,
+              "state": inputStateFieldValue,
+              "zipcode": inputZipcodeFieldValue
             }),
             dataType: "json",
             success: function (data, textStatus, jqXHR)
@@ -234,7 +229,17 @@
             
               if (typeof data.success !== "undefined")
               {
-                // add contact to client
+                contactTable.row.add(
+                [
+                  inputFirstNameFieldValue,
+                  inputLastNameFieldValue,
+                  inputPhoneNumberFieldValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'),
+                  inputAddressFieldValue,
+                  inputCityFieldValue,
+                  inputStateFieldValue,
+                  inputZipcodeFieldValue,
+                  "<div style=\"text-align: center;\"><input type=\"checkbox\" onclick=\"toggleDeleteContact('" + data.userId + "')\"></div></td>"
+                ]).draw();
               }
             },
             error: function (jqXHR, textStatus, errorThrown)
@@ -257,7 +262,7 @@
           $("#addContactModal").modal('hide');
         });
         
-        // Add contact to list. (server and client)
+        // Remove contacts from list.
         $("#removeContactButton").click(function ()
         {
           

@@ -122,3 +122,5 @@ gradle-app.setting
 
 # API Gradle stuff
 api/.gradle/*
+
+api/build/**

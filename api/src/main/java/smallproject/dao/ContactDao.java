@@ -2,6 +2,7 @@ package smallproject.dao;
 
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
 import org.jdbi.v3.sqlobject.customizer.BindFields;
+import org.jdbi.v3.sqlobject.statement.GetGeneratedKeys;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import smallproject.model.Contact;
@@ -37,5 +38,13 @@ public interface ContactDao {
     @SqlQuery("SELECT * FROM contacts WHERE userId = ?")
     @RegisterBeanMapper(Contact.class)
     List<Contact> getContactsForUserId(final long userId);
+
+    @SqlUpdate("INSERT INTO contacts (firstName, lastName, address, city, state, zip, phone, email, userID) " +
+            "VALUES (:firstName, :lastName, :address, :city, :state, :zip, :phone, :email, :userId)")
+    @GetGeneratedKeys("id")
+    long addContact(@BindFields final Contact contact);
+
+    @SqlUpdate("DELETE FROM contacts WHERE id = ? AND userId = ?")
+    boolean removeContact(final int uid, final long userId);
 
 }

@@ -52,6 +52,7 @@
           dataType: "json",
           success: function (data, textStatus, jqXHR)
           {
+            $("#loginInvalidAlert").hide();
             $("#signedOutAlert").hide();
             $("#connectionFailedAlert").hide();
           
@@ -71,10 +72,12 @@
             {
               $("#signedOutAlert").hide();
               console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
-              $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>" + jqXHR.responseJSON.error + "</p>");
+              $("#loginInvalidAlert").html(jqXHR.responseJSON.error)
+              $("#loginInvalidAlert").show();
             }
             else
             {
+              $("#loginInvalidAlert").hide();
               $("#signedOutAlert").hide();
               $("#connectionFailedAlert").show();
             }
@@ -87,16 +90,16 @@
   </script>
 </head>
 
-<body>
+<body style="background: url('https://wallpaper-house.com/data/out/5/wallpaper2you_48402.jpg');">
   <!-- Navbar -->
   <nav class="navbar navbar-light bg-light">
-    <a class="navbar-brand">Contact Manager</a>
+    <a class="navbar-brand text-success">Contact Cube</a>
     <form class="form-inline">
       <a href="login.html">
-        <button class="btn btn-primary mr-2 my-sm-0" type="button">Sign In</button>
+        <button class="btn btn-success mr-2 my-sm-0" type="button">Sign In</button>
       </a>
       <a href="register.html">
-        <button class="btn btn-outline-primary my-2 my-sm-0" type="button">Register</button>
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button">Register</button>
       </a>
     </form>
   </nav>
@@ -111,28 +114,32 @@
     You've successfully signed out!
   </div>
 
+  <!-- Invalid Login Alert -->
+  <div class="alert alert-danger collapse" role="alert" id="loginInvalidAlert" style="z-index: 1">
+    Invalid login credentials!
+  </div>
+
   <!-- Login Form -->
-  <form id="login_form">
-    <div class="row">
-      <div class="container col-6 col-md-4 card p-3" style="margin-top: 10%;">
-        <span class="mx-auto"><h4>Please Sign In</h4></span>
-        <hr>
-        <div class="form-group">
-          <label for="inputEmail">Email</label>
-          <input type="text" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="name@email.com" required pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
+  <div class="container-fluid">
+    <form id="login_form">
+      <div class="row">
+        <div class="container col-6 col-md-4 card p-3 bg-light shadow" style="margin-top: 10%;">
+          <span class="mx-auto"><h4>Please Sign In</h4></span>
+          <hr>
+          <div class="form-group">
+            <label for="inputEmail">Email</label>
+            <input type="text" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="name@email.com" required pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
+          </div>
+          <div class="form-group">
+            <label for="inputPassword">Password</label>
+            <input type="password" class="form-control" id="inputPassword" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
+          </div>
+          <button type="submit" class="btn btn-success">Sign In</button>
+          <hr>
         </div>
-        <div class="form-group">
-          <label for="inputPassword">Password</label>
-          <input type="password" class="form-control" id="inputPassword" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
-        </div>
-        <button type="submit" class="btn btn-primary">Sign In</button>
-        <label class="form-check-label">
-          <span class="text-danger align-middle" id="errorMsg"></span>
-        </label>
-        <hr>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </body>
 
 </html>

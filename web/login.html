@@ -52,6 +52,7 @@
           dataType: "json",
           success: function (data, textStatus, jqXHR)
           {
+            $("#loginInvalidAlert").hide();
             $("#signedOutAlert").hide();
             $("#connectionFailedAlert").hide();
           
@@ -71,10 +72,12 @@
             {
               $("#signedOutAlert").hide();
               console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
-              $("#errorMsg").html("<div class='col-xs-12' style='height:13px;'></div><p class='text-center' style='height:10px;'>" + jqXHR.responseJSON.error + "</p>");
+              $("#loginInvalidAlert").html(jqXHR.responseJSON.error)
+              $("#loginInvalidAlert").show();
             }
             else
             {
+              $("#loginInvalidAlert").hide();
               $("#signedOutAlert").hide();
               $("#connectionFailedAlert").show();
             }
@@ -132,9 +135,6 @@
             <input type="password" class="form-control" id="inputPassword" required pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}">
           </div>
           <button type="submit" class="btn btn-success">Sign In</button>
-          <label class="form-check-label">
-            <span class="text-danger align-middle" id="errorMsg"></span>
-          </label>
           <hr>
         </div>
       </div>

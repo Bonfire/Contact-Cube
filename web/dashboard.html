@@ -137,6 +137,13 @@
             if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
             {
               console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+              
+              if (jqXHR.responseJSON.error === "Invalid token received!")
+              {
+                document.cookie = "token=; Max-Age=0;";
+                window.location.href = "login.html?logout=0";
+              }
+              
               document.getElementById("serverErrorAlert").innerHTML = jqXHR.responseJSON.error;
               $("#connectionFailedAlert").hide();
               $("#serverErrorAlert").show();
@@ -213,6 +220,13 @@
               if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
               {
                 console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+                
+                if (jqXHR.responseJSON.error === "Invalid token received!")
+                {
+                  document.cookie = "token=; Max-Age=0;";
+                  window.location.href = "login.html?logout=0";
+                }
+                
                 document.getElementById("serverErrorAlert").innerHTML = jqXHR.responseJSON.error;
                 $("#connectionFailedAlert").hide();
                 $("#serverErrorAlert").show();
@@ -282,6 +296,13 @@
               if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
               {
                 console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+                
+                if (jqXHR.responseJSON.error === "Invalid token received!")
+                {
+                  document.cookie = "token=; Max-Age=0;";
+                  window.location.href = "login.html?logout=0";
+                }
+                
                 document.getElementById("serverErrorAlert").innerHTML = jqXHR.responseJSON.error;
                 $("#connectionFailedAlert").hide();
                 $("#serverErrorAlert").show();
@@ -341,6 +362,13 @@
               if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
               {
                 console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+                
+                if (jqXHR.responseJSON.error === "Invalid token received!")
+                {
+                  document.cookie = "token=; Max-Age=0;";
+                  window.location.href = "login.html?logout=0";
+                }
+                
                 document.getElementById("serverErrorAlert").innerHTML = jqXHR.responseJSON.error;
                 $("#connectionFailedAlert").hide();
                 $("#serverErrorAlert").show();

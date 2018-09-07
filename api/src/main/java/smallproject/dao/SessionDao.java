@@ -10,6 +10,8 @@ import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import smallproject.model.Session;
 import smallproject.model.User;
 
+import java.util.Optional;
+
 /**
  * @author Matthew
  */
@@ -33,7 +35,7 @@ public interface SessionDao {
     void _insertSession(@BindFields final Session session);
 
     @SqlQuery("SELECT userId FROM sessions WHERE ip = ? AND token = ?")
-    long userIdForSession(final String ip, final String token);
+    Optional<Long> userIdForSession(final String ip, final String token);
 
     @SqlUpdate("DELETE FROM sessions WHERE userId = ? AND token = ?")
     void logout(final long userId, final String token);

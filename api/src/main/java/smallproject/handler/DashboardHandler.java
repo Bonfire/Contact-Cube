@@ -78,7 +78,7 @@ public class DashboardHandler extends AbstractHandler {
                 return;
             }
 
-            final long userId = dbi.withExtension(SessionDao.class, dao -> dao.userIdForSession(ip, token));
+            final long userId = dbi.withExtension(SessionDao.class, dao -> dao.userIdForSession(ip, token)).orElse(-1L);
             if (userId <= 0) {
                 badRequest(response, ERROR_INVALID_TOKEN);
                 return;

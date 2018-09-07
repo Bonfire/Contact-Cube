@@ -20,9 +20,17 @@ import java.io.IOException;
  */
 public class LoginHandler extends AbstractHandler {
 
+    private static final String ERROR_INVALID_PAYLOAD = "Payload is not a valid JSON object";
+    private static final String ERROR_MISSING_EMAIL = "payload is missing email";
+    private static final String ERROR_MISSING_PASSWORD = "payload is missing password";
+    private static final String ERORR_EMPTY_EMAIL = "enail may not be empty";
+    private static final String ERROR_EMPTY_PASSWORD = "password may not be empty";
+    private static final String ERROR_INVALID_CREDENTIALS = "invalid email/password";
+    private static final String ERROR_FAILED_SESSION = "unable to create session";
+
+
     public LoginHandler(final Jdbi dbi) {
         super(dbi);
-        dbi.useExtension(UserDao.class, UserDao::createTable);
     }
 
     /**
@@ -40,28 +48,28 @@ public class LoginHandler extends AbstractHandler {
 
         final JsonElement element = new JsonParser().parse(getPayload(req.getReader()));
         if (!element.isJsonObject()) {
-            badRequest(response, "payload is not a valid JSON object!");
+            badRequest(response, ERROR_INVALID_PAYLOAD);
             return;
         }
 
         final JsonObject json = element.getAsJsonObject();
         if (!json.has("email")) {
-            badRequest(response, "payload is missing email!");
+            badRequest(response, ERROR_MISSING_EMAIL);
             return;
         }
         if (!json.has("password")) {
-            badRequest(response, "payload is missing password hash!");
+            badRequest(response, ERROR_MISSING_PASSWORD);
             return;
         }
 
         final String email = json.get("email").getAsString();
         final String password = json.get("password").getAsString();
         if (email.isEmpty()) {
-            badRequest(response, "email may not be empty!");
+            badRequest(response, ERORR_EMPTY_EMAIL);
             return;
         }
         if (password.isEmpty()) {
-            badRequest(response, "password may not be empty!");
+            badRequest(response, ERROR_EMPTY_PASSWORD);
             return;
         }
 
@@ -72,14 +80,14 @@ public class LoginHandler extends AbstractHandler {
                 final User authenticatedUser = userDao.login(email, password);
                 // if authenticatedUser is null, no match for email/password
                 if (authenticatedUser == null) {
-                    error(response, HttpServletResponse.SC_FORBIDDEN, "invalid email/password");
+                    error(response, HttpServletResponse.SC_FORBIDDEN, ERROR_INVALID_CREDENTIALS);
                     return;
                 }
                 // some match was found, lookup session
                 final SessionDao sessionDao = h.attach(SessionDao.class);
                 final Session session = sessionDao.create(authenticatedUser, ip);
                 if (session == null) {
-                    badRequest(response, "unable to create session");
+                    badRequest(response, ERROR_FAILED_SESSION);
                     return;
                 }
                 sendSession(response, session);

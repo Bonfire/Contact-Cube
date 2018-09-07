@@ -6,6 +6,8 @@
 
   <title>Contact Manager - Register</title>
 
+    <link rel="shortcut icon" type="image/png" href="logo.png"/>
+
   <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
@@ -190,16 +192,19 @@
   </script>
 </head>
 
-<body>
+<body style="background: url('background.jpg')">
   <!-- Navbar -->
   <nav class="navbar navbar-light bg-light">
-    <a class="navbar-brand">Contact Manager</a>
+      <a class="navbar-brand">
+          <img src="logo.png" style="display: inline-block; height: auto; width: 25%;">
+          <span class="ml-2" style="display: inline-block;">Contact Cube</span>
+      </a>
     <form class="form-inline">
       <a href="login.html">
-        <button class="btn btn-outline-primary mr-2 my-sm-0" type="button">Sign In</button>
+        <button class="btn btn-outline-success mr-2 my-sm-0" type="button">Sign In</button>
       </a>
       <a href="register.html">
-        <button class="btn btn-primary my-2 my-sm-0" type="button">Register</button>
+        <button class="btn btn-success my-2 my-sm-0" type="button">Register</button>
       </a>
     </form>
   </nav>
@@ -218,7 +223,7 @@
   <div class="container-fluid">
     <form id="registration_form">
       <div class="row">
-        <div class="container col-6 col-md-4 card p-3" style="margin-top: 5%;">
+        <div class="container col-6 col-md-4 card p-3 bg-light shadow" style="margin-top: 5%;">
           <div style="text-align: center;"><h4>Register Here</h4></div>
           <hr>
           <form class="container was-validated" novalidate>
@@ -253,7 +258,7 @@
               <input type="password" class="form-control" id="inputConfirmPassword" required>
             </div>
 
-            <button type="submit" class="btn btn-primary" id="register" disabled=true>Register</button>
+            <button type="submit" class="btn btn-success" id="register" disabled=true>Register</button>
           </form>
           <hr>
         </div>

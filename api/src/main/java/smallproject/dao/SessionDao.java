@@ -3,11 +3,14 @@ package smallproject.dao;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hashing;
 import org.jdbi.v3.sqlobject.config.RegisterBeanMapper;
+import org.jdbi.v3.sqlobject.customizer.Bind;
 import org.jdbi.v3.sqlobject.customizer.BindFields;
 import org.jdbi.v3.sqlobject.statement.SqlQuery;
 import org.jdbi.v3.sqlobject.statement.SqlUpdate;
 import smallproject.model.Session;
 import smallproject.model.User;
+
+import java.util.Optional;
 
 /**
  * @author Matthew
@@ -27,11 +30,15 @@ public interface SessionDao {
     @RegisterBeanMapper(Session.class)
     Session _getSession(final long userId, final String ip);
 
-    @SqlUpdate("INSERT INTO sessions (userId, ip, token) VALUES (:userId, :ip, :token)")
+    @SqlUpdate("INSERT INTO sessions (userId, ip, token) VALUES (:userId, :ip, :token) " +
+            "ON DUPLICATE KEY UPDATE ip = :ip, token = :token")
     void _insertSession(@BindFields final Session session);
 
     @SqlQuery("SELECT userId FROM sessions WHERE ip = ? AND token = ?")
-    long userIdForSession(final String ip, final String token);
+    Optional<Long> userIdForSession(final String ip, final String token);
+
+    @SqlUpdate("DELETE FROM sessions WHERE userId = ? AND token = ?")
+    void logout(final long userId, final String token);
 
     /**
      * Creates a session for the provided user

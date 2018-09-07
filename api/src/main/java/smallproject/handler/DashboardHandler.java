@@ -40,7 +40,6 @@ public class DashboardHandler extends AbstractHandler {
 
     public DashboardHandler(final Jdbi dbi) {
         super(dbi);
-        dbi.useExtension(UserDao.class, UserDao::createTable);
     }
 
     /**

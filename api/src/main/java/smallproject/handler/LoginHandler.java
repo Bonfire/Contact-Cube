@@ -31,7 +31,6 @@ public class LoginHandler extends AbstractHandler {
 
     public LoginHandler(final Jdbi dbi) {
         super(dbi);
-        dbi.useExtension(UserDao.class, UserDao::createTable);
     }
 
     /**

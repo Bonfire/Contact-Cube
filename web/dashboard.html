@@ -318,11 +318,24 @@
             
               if (typeof data.success !== "undefined")
               {
+                if (inputPhoneNumberFieldValue.length === 11)
+                {
+                  inputPhoneNumberFieldValue = inputPhoneNumberFieldValue.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, '+$1 ($2) $3-$4');
+                }
+                else if (inputPhoneNumberFieldValue.length === 10)
+                {
+                  inputPhoneNumberFieldValue = inputPhoneNumberFieldValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+                }
+                else if (inputPhoneNumberFieldValue.length === 7)
+                {
+                  inputPhoneNumberFieldValue = inputPhoneNumberFieldValue.replace(/(\d{3})(\d{4})/, '$1-$2');
+                }
+              
                 contactTable.row.add(
                 [
                   inputFirstNameFieldValue,
                   inputLastNameFieldValue,
-                  inputPhoneNumberFieldValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'),
+                  inputPhoneNumberFieldValue,
                   inputEmailFieldValue,
                   inputAddressFieldValue,
                   inputCityFieldValue,

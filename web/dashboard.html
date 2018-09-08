@@ -284,14 +284,14 @@
         // Add contact to list.
         $("#addContactButton").click(function ()
         {
-          var inputFirstNameFieldValue = document.getElementById("inputFirstName").value.replace(/[^a-z]/gi, '');
-          var inputLastNameFieldValue = document.getElementById("inputLastName").value.replace(/[^a-z]/gi, '');
-          var inputEmailFieldValue = document.getElementById("inputEmail").value;
-          var inputPhoneNumberFieldValue = document.getElementById("inputPhoneNumber").value.replace(/[^0-9]/gi, '');
-          var inputAddressFieldValue = document.getElementById("inputAddress").value.replace(/[^0-9a-z]/gi, '');
-          var inputCityFieldValue = document.getElementById("inputCity").value.replace(/[^a-z]/gi, '');
-          var inputStateFieldValue = document.getElementById("inputState").value.replace(/[^a-z]/gi, '');
-          var inputZipcodeFieldValue = document.getElementById("inputZipcode").value.replace(/[^0-9]/gi, '');
+          var inputFirstNameFieldValue = document.getElementById("inputFirstName").value;
+          var inputLastNameFieldValue = document.getElementById("inputLastName").value;
+          var inputPhoneNumberFieldValue = document.getElementById("inputPhoneNumber").value.replace(/[^0-9]/gi, "");
+          var inputEmailFieldValue = document.getElementById("inputEmail").value.replace(/\s+/, "");
+          var inputAddressFieldValue = document.getElementById("inputAddress").value;
+          var inputCityFieldValue = document.getElementById("inputCity").value;
+          var inputStateFieldValue = document.getElementById("inputState").value;
+          var inputZipcodeFieldValue = document.getElementById("inputZipcode").value.replace(/[^0-9]/gi, "");
         
           $.ajax(
           {
@@ -318,11 +318,24 @@
             
               if (typeof data.success !== "undefined")
               {
+                if (inputPhoneNumberFieldValue.length === 11)
+                {
+                  inputPhoneNumberFieldValue = inputPhoneNumberFieldValue.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, '+$1 ($2) $3-$4');
+                }
+                else if (inputPhoneNumberFieldValue.length === 10)
+                {
+                  inputPhoneNumberFieldValue = inputPhoneNumberFieldValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+                }
+                else if (inputPhoneNumberFieldValue.length === 7)
+                {
+                  inputPhoneNumberFieldValue = inputPhoneNumberFieldValue.replace(/(\d{3})(\d{4})/, '$1-$2');
+                }
+              
                 contactTable.row.add(
                 [
                   inputFirstNameFieldValue,
                   inputLastNameFieldValue,
-                  inputPhoneNumberFieldValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'),
+                  inputPhoneNumberFieldValue,
                   inputEmailFieldValue,
                   inputAddressFieldValue,
                   inputCityFieldValue,

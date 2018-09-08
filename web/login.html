@@ -55,7 +55,7 @@
             if (jqXHR.responseJSON.error === "Invalid token received!")
             {
               document.cookie = "token=; Max-Age=0;";
-              window.location.href = "login.html?logout=0";
+              $("#invalidSessionAlert").show();
             }
             
             document.getElementById("serverErrorAlert").innerHTML = jqXHR.responseJSON.error;
@@ -75,9 +75,16 @@
       var key_value = url_vars.split("&")[0].split("=");
       
       // Signed out alert. (Redirect from dashboard)
-      if (key_value[0] === "logout" && key_value[1] === "1")
+      if (key_value[0] === "logout")
       {
-        $("#signedOutAlert").show();
+        if (key_value[1] === "1")
+        {
+          $("#signedOutAlert").show();
+        }
+        else if (key_value[1] === "0")
+        {
+          $("#invalidSessionAlert").show();
+        }
       }
     
       $("#login_form").submit(function (e)

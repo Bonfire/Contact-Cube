@@ -24,19 +24,19 @@ import java.util.Set;
 public class DashboardHandler extends AbstractHandler {
 
     private static final String ERROR_INVALID_PAYLOAD = "Payload is not a valid JSON object!";
-    private static final String ERROR_INVALID_TOKEN = "invalid token received!";
+    private static final String ERROR_INVALID_TOKEN = "Invalid token received!";
     private static final String ERROR_MISSING_TOKEN = "Payload does not contain the 'token' key";
     private static final String ERROR_MISSING_ACTION = "Paylod does not contain the 'action' key";
     private static final String ERROR_MISSING_REMOVE_IDS = "Payload does not contain the 'ids' key";
     private static final String ERROR_MISMATCH_REMOVE_IDS = "Removal key 'ids' must be a JSON array!";
     private static final String ERROR_DESERIALIZE_CONTACT_FAIL = "Unable to deserialize JSON object to Contact object";
 
-    private static final String SUCCESS_CONTACTS_RETREIVED = "contacts retreived";
-    private static final String SUCCESS_CONTACT_ADDED = "contact added";
-    private static final String SUCCESS_REMOVE_ALL = "all contacts removed";
-    private static final String SUCCESS_LOGGED_OUT = "logged out";
+    private static final String SUCCESS_CONTACTS_RETREIVED = "Contacts retreived";
+    private static final String SUCCESS_CONTACT_ADDED = "Contacts added";
+    private static final String SUCCESS_REMOVE_ALL = "All contacts removed";
+    private static final String SUCCESS_LOGGED_OUT = "Logged out";
 
-    private static final String WARNING_REMOVE_SOME = "some UIDs couldn't be removed";
+    private static final String WARNING_REMOVE_SOME = "Some UIDs couldn't be removed";
 
     public DashboardHandler(final Jdbi dbi) {
         super(dbi);

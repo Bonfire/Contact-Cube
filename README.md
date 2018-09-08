@@ -1,4 +1,4 @@
-# Contact Cube
+![](http://contactcube.us.to/big_logo.png)
 
 A simple, fast, lean website for storing contacts.
 

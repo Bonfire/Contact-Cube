@@ -38,7 +38,7 @@
             if (data.success === "Session invalid")
             {
               document.cookie = "token=; Max-Age=0;";
-              window.location.href = "login.html?logout=0";
+              $("#invalidSessionAlert").show();
             }
             else
             {
@@ -51,13 +51,6 @@
           if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
           {
             console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
-            
-            if (jqXHR.responseJSON.error === "Invalid token received!")
-            {
-              document.cookie = "token=; Max-Age=0;";
-              $("#invalidSessionAlert").show();
-            }
-            
             document.getElementById("serverErrorAlert").innerHTML = jqXHR.responseJSON.error;
             $("#serverErrorAlert").show();
           }
@@ -107,6 +100,7 @@
           dataType: "json",
           success: function (data, textStatus, jqXHR)
           {
+            $("#invalidSessionAlert").hide();
             $("#loginInvalidAlert").hide();
             $("#signedOutAlert").hide();
             $("#connectionFailedAlert").hide();
@@ -123,17 +117,19 @@
           },
           error: function (jqXHR, textStatus, errorThrown)
           {
+            $("#invalidSessionAlert").hide();
+            $("#signedOutAlert").hide();
+          
             if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
             {
-              $("#signedOutAlert").hide();
               console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+              $("#connectionFailedAlert").hide();
               $("#loginInvalidAlert").html(jqXHR.responseJSON.error)
               $("#loginInvalidAlert").show();
             }
             else
             {
               $("#loginInvalidAlert").hide();
-              $("#signedOutAlert").hide();
               $("#connectionFailedAlert").show();
             }
             

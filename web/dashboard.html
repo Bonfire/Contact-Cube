@@ -19,6 +19,7 @@
     <script type="application/javascript">
       var checkboxSelectedCounter = 0;
       var deleteContactObjects = new Array();
+      var BASE_URL = "http://" + window.location.hostname + ":8080/";
       var token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
       
       // Missing token redirect.
@@ -31,7 +32,7 @@
       $.ajax(
       {
         type: "POST",
-        url: "http://142.93.253.171:8080/login",
+        url: BASE_URL + "login",
         data: JSON.stringify(
         {
           "token": token,
@@ -140,7 +141,7 @@
         $.ajax(
         {
           type: "POST",
-          url: "http://142.93.253.171:8080/dashboard",
+          url: BASE_URL + "dashboard",
           data: JSON.stringify(
           {
             "token": token,
@@ -362,7 +363,7 @@
           $.ajax(
           {
             type: "POST",
-            url: "http://142.93.253.171:8080/dashboard",
+            url: BASE_URL + "dashboard",
             data: JSON.stringify(
             {
               "token": token,
@@ -420,7 +421,7 @@
           $.ajax(
           {
             type: "POST",
-            url: "http://142.93.253.171:8080/dashboard",
+            url: BASE_URL + "dashboard",
             data: JSON.stringify(
             {
               "token": token,
@@ -509,7 +510,7 @@
           $.ajax(
           {
             type: "POST",
-            url: "http://142.93.253.171:8080/dashboard",
+            url: BASE_URL + "dashboard",
             data: JSON.stringify(
             {
               "token": token,

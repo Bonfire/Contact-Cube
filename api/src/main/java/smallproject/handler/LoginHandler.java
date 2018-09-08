@@ -20,13 +20,17 @@ import java.io.IOException;
  */
 public class LoginHandler extends AbstractHandler {
 
-    private static final String ERROR_INVALID_PAYLOAD = "Payload is not a valid JSON object";
-    private static final String ERROR_MISSING_EMAIL = "payload is missing email";
-    private static final String ERROR_MISSING_PASSWORD = "payload is missing password";
-    private static final String ERORR_EMPTY_EMAIL = "enail may not be empty";
-    private static final String ERROR_EMPTY_PASSWORD = "password may not be empty";
-    private static final String ERROR_INVALID_CREDENTIALS = "invalid email/password";
-    private static final String ERROR_FAILED_SESSION = "unable to create session";
+    private static final String ERROR_INVALID_PAYLOAD = "Payload is not a valid JSON object!";
+    private static final String ERROR_MISSING_EMAIL = "Payload is missing the email!";
+    private static final String ERROR_MISSING_PASSWORD = "Payload is missing the password!";
+    private static final String ERORR_EMPTY_EMAIL = "Email may not be empty!";
+    private static final String ERROR_EMPTY_PASSWORD = "Password may not be empty!";
+    private static final String ERROR_INVALID_CREDENTIALS = "Invalid email or password!";
+    private static final String ERROR_FAILED_SESSION = "Unable to create your session";
+    private static final String ERROR_MISSING_TOKEN = "Token was missing from JSON payload";
+
+    private static final String SUCCESS_SESSION_VALID = "Session valid";
+    private static final String SUCCESS_SESSION_INVALID = "Session invalid";
 
 
     public LoginHandler(final Jdbi dbi) {
@@ -51,8 +55,29 @@ public class LoginHandler extends AbstractHandler {
             badRequest(response, ERROR_INVALID_PAYLOAD);
             return;
         }
-
         final JsonObject json = element.getAsJsonObject();
+
+        // if the JSON payload has an action... lets follow it:
+        if (json.has("action")) {
+
+            final String action = json.get("action").getAsString();
+            switch (action) {
+                case "is_session_valid":
+                    final String token = json.has("token") ? json.get("token").getAsString() : null;
+                    if (token == null) {
+                        badRequest(response, ERROR_MISSING_TOKEN);
+                        return;
+                    }
+                    final long userId = dbi.withExtension(SessionDao.class, dao ->
+                            dao.userIdForSession(ip, token).orElse(-1L));
+                    final JsonObject payload = new JsonObject();
+                    payload.addProperty(KEY_SUCCESS, userId <= 0L ? SUCCESS_SESSION_INVALID : SUCCESS_SESSION_VALID);
+                    ok(response, payload);
+                    break;
+            }
+            return;
+        }
+
         if (!json.has("email")) {
             badRequest(response, ERROR_MISSING_EMAIL);
             return;

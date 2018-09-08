@@ -333,6 +333,29 @@
           document.getElementById("inputZipcode").setCustomValidity("");
         });
         
+        // Validate form on focusout.  Makes it easier to add a contact when autofilling.
+        $('#formAddContact').focusout(function ()
+        {
+          var inputFirstNameField = document.getElementById("inputFirstName");
+          var inputLastNameField = document.getElementById("inputLastName");
+          var inputPhoneNumberField = document.getElementById("inputPhoneNumber");
+          var inputEmailField = document.getElementById("inputEmail");
+          var inputAddressField = document.getElementById("inputAddress");
+          var inputCityField = document.getElementById("inputCity");
+          var inputStateField = document.getElementById("inputState");
+          var inputZipcodeField = document.getElementById("inputZipcode");
+        
+          // Optional form field validation.
+          if (inputFirstNameField.checkValidity() && inputLastNameField.checkValidity() && inputPhoneNumberField.checkValidity() && inputEmailField.checkValidity() && inputAddressField.checkValidity() && inputCityField.checkValidity() && inputStateField.checkValidity() && inputZipcodeField.checkValidity())
+          {
+            $('#addContactButton').prop('disabled', false);
+          }
+          else
+          {
+            $('#addContactButton').prop('disabled', true);
+          }
+        });
+        
         // Signs a user out of their account.
         $("#signOutButton").click(function ()
         {

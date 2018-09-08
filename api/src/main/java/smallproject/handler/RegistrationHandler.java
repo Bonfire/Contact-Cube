@@ -24,14 +24,14 @@ public class RegistrationHandler extends AbstractHandler {
 
     private static final EmailValidator EMAIL_VALIDATOR = EmailValidator.getInstance(false, true);
 
-    private static final String ERROR_DESERIALIZE_FAIL = "unable to construct user from payload";
-    private static final String ERROR_INVALID_EMAIL = "invalid email address";
-    private static final String ERROR_INVALID_PASSWORD = "invalid password";
-    private static final String ERROR_INVALID_FIRST_NAME = "invalid first name";
-    private static final String ERROR_INVALID_LAST_NAME = "invalid last name";
-    private static final String ERROR_EMAIL_EXISTS = "email is already in use";
+    private static final String ERROR_DESERIALIZE_FAIL = "Unable to construct user from payload!";
+    private static final String ERROR_INVALID_EMAIL = "Invalid email address!";
+    private static final String ERROR_INVALID_PASSWORD = "Invalid password!";
+    private static final String ERROR_INVALID_FIRST_NAME = "Invalid first name!";
+    private static final String ERROR_INVALID_LAST_NAME = "Invalid last name!";
+    private static final String ERROR_EMAIL_EXISTS = "Email is already in use";
 
-    private static final String SUCCESS_VALID_EMAIL = "email is valid";
+    private static final String SUCCESS_VALID_EMAIL = "Email is valid";
 
     public RegistrationHandler(final Jdbi dbi) {
         super(dbi);

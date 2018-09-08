@@ -20,13 +20,13 @@ import java.io.IOException;
  */
 public class LoginHandler extends AbstractHandler {
 
-    private static final String ERROR_INVALID_PAYLOAD = "Payload is not a valid JSON object";
-    private static final String ERROR_MISSING_EMAIL = "payload is missing email";
-    private static final String ERROR_MISSING_PASSWORD = "payload is missing password";
-    private static final String ERORR_EMPTY_EMAIL = "enail may not be empty";
-    private static final String ERROR_EMPTY_PASSWORD = "password may not be empty";
-    private static final String ERROR_INVALID_CREDENTIALS = "invalid email/password";
-    private static final String ERROR_FAILED_SESSION = "unable to create session";
+    private static final String ERROR_INVALID_PAYLOAD = "Payload is not a valid JSON object!";
+    private static final String ERROR_MISSING_EMAIL = "Payload is missing the email!";
+    private static final String ERROR_MISSING_PASSWORD = "Payload is missing the password!";
+    private static final String ERORR_EMPTY_EMAIL = "Email may not be empty!";
+    private static final String ERROR_EMPTY_PASSWORD = "Password may not be empty!";
+    private static final String ERROR_INVALID_CREDENTIALS = "Invalid email or password!";
+    private static final String ERROR_FAILED_SESSION = "Unable to create your session";
 
 
     public LoginHandler(final Jdbi dbi) {

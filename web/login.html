@@ -17,6 +17,7 @@
   <script src="https://bitwiseshiftleft.github.io/sjcl/sjcl.js" integrity="sha384-zJXJqc5ftX51ojskUi8aWFg0yrz9P61p6Wyg8n0cyFYsgWiAYtxnVWzh8d8BLcw0" crossorigin="anonymous"></script>
 
   <script type="application/javascript">
+    var BASE_URL = "http://" + window.location.hostname + ":8080/";
     var token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
     
     // Automatic login
@@ -26,7 +27,7 @@
       $.ajax(
       {
         type: "POST",
-        url: "http://142.93.253.171:8080/login",
+        url: BASE_URL + "login",
         data: JSON.stringify(
         {
           "token": token,
@@ -140,7 +141,7 @@
         $.ajax(
         {
           type: "POST",
-          url: "http://142.93.253.171:8080/login",
+          url: BASE_URL + "login",
           data: JSON.stringify(
           {
             "email": $("#inputEmail").val(),

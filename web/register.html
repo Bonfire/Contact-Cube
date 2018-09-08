@@ -18,6 +18,7 @@
 
   <script type="application/javascript">
     var email_verified = false;
+    var BASE_URL = "http://" + window.location.hostname + ":8080/";
     
     // Ensure the registration email is not already in the database.
     function validateEmail()
@@ -29,7 +30,7 @@
         $.ajax(
         {
           type: "POST",
-          url: "http://142.93.253.171:8080/register",
+          url: BASE_URL + "register",
           data: JSON.stringify(
           {
             "email": inputField.value
@@ -155,7 +156,7 @@
         $.ajax(
         {
           type: "POST",
-          url: "http://142.93.253.171:8080/register",
+          url: BASE_URL + "register",
           data: JSON.stringify(
           {
             "email": inputEmailFieldValue,

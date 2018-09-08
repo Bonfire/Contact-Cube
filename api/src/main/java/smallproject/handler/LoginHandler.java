@@ -75,6 +75,7 @@ public class LoginHandler extends AbstractHandler {
                     ok(response, payload);
                     break;
             }
+            return;
         }
 
         if (!json.has("email")) {

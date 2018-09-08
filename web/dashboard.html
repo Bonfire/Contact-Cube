@@ -207,16 +207,16 @@
         // Enables save contact button when form is filled.  On 'keyup' for responsiveness.
         $(document).keyup(function ()
         {
-          var inputFirstNameFieldValid = document.getElementById("inputFirstName").checkValidity();
-          var inputLastNameFieldValid = document.getElementById("inputLastName").checkValidity();
-          var inputPhoneNumberFieldValid = document.getElementById("inputPhoneNumber").checkValidity();
-          var inputEmailFieldValid = document.getElementById("inputEmail").checkValidity();
-          var inputAddressFieldValid = document.getElementById("inputAddress").checkValidity();
-          var inputCityFieldValid = document.getElementById("inputCity").checkValidity();
-          var inputStateFieldValid = document.getElementById("inputState").checkValidity();
-          var inputZipcodeFieldValid = document.getElementById("inputZipcode").checkValidity();
+          var inputFirstNameField = document.getElementById("inputFirstName");
+          var inputLastNameField = document.getElementById("inputLastName");
+          var inputPhoneNumberField = document.getElementById("inputPhoneNumber");
+          var inputEmailField = document.getElementById("inputEmail");
+          var inputAddressField = document.getElementById("inputAddress");
+          var inputCityField = document.getElementById("inputCity");
+          var inputStateField = document.getElementById("inputState");
+          var inputZipcodeField = document.getElementById("inputZipcode");
           
-          if (inputFirstNameFieldValid && inputLastNameFieldValid && inputPhoneNumberFieldValid && inputEmailFieldValid && inputAddressFieldValid && inputCityFieldValid && inputStateFieldValid && inputZipcodeFieldValid)
+          if (inputFirstNameField.checkValidity() && inputLastNameField.checkValidity() && inputPhoneNumberField.checkValidity() && inputEmailField.checkValidity() && inputAddressField.checkValidity() && inputCityField.checkValidity() && inputStateField.checkValidity() && inputZipcodeField.checkValidity() && inputFirstNameField.value !== "" && inputFirstNameField.value.match(/[a-z]/i) && inputLastNameField.value !== "" && inputLastNameField.value.match(/[a-z]/i) && inputPhoneNumberField.value.replace(/[^0-9]/gi, "") !== "" && inputEmailField.value.replace(/\s+/, "") !== "" && inputAddressField.value !== "" && inputAddressField.value.match(/[a-z]/i) && inputCityField.value !== "" && inputCityField.value.match(/[a-z]/i) && inputStateField.value !== "" && inputZipcodeField.value.replace(/[^0-9]/gi, "") !== "")
           {
             $('#addContactButton').prop('disabled', false);
           }

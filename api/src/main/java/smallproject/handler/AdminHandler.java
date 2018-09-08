@@ -19,8 +19,8 @@ import java.util.List;
  */
 public class AdminHandler extends AbstractHandler {
 
-    private static final String SUCCESS_DATABASES_WIPED = "all databases wiped!";
-    private static final String SUCCESS_USERS_TRUNCATED = "all users have been deleted";
+    private static final String SUCCESS_DATABASES_WIPED = "All databases wiped!";
+    private static final String SUCCESS_USERS_TRUNCATED = "All users have been deleted";
 
     public AdminHandler(final Jdbi dbi) {
         super(dbi);

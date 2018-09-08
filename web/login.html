@@ -6,6 +6,8 @@
 
   <title>Contact Manager - Sign In</title>
 
+  <link rel="shortcut icon" type="image/png" href="logo.png"/>
+
   <!-- Bootstrap CSS/JS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
@@ -90,10 +92,13 @@
   </script>
 </head>
 
-<body style="background: url('https://wallpaper-house.com/data/out/5/wallpaper2you_48402.jpg');">
+<body style="background: url('background.jpg');">
   <!-- Navbar -->
   <nav class="navbar navbar-light bg-light">
-    <a class="navbar-brand text-success">Contact Cube</a>
+    <a class="navbar-brand">
+      <img src="logo.png" style="display: inline-block; height: auto; width: 25%;">
+      <span class="ml-2" style="display: inline-block;">Contact Cube</span>
+    </a>
     <form class="form-inline">
       <a href="login.html">
         <button class="btn btn-success mr-2 my-sm-0" type="button">Sign In</button>
@@ -117,6 +122,11 @@
   <!-- Invalid Login Alert -->
   <div class="alert alert-danger collapse" role="alert" id="loginInvalidAlert" style="z-index: 1">
     Invalid login credentials!
+  </div>
+
+  <!-- Invalid Session Alert -->
+  <div class="alert alert-warning collapse" role="alert" id="invalidSessionAlert" style="z-index: 1">
+    Invalid session: You have signed in somewhere else
   </div>
 
   <!-- Login Form -->

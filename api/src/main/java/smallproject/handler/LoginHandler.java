@@ -27,7 +27,7 @@ public class LoginHandler extends AbstractHandler {
     private static final String ERROR_EMPTY_PASSWORD = "Password may not be empty!";
     private static final String ERROR_INVALID_CREDENTIALS = "Invalid email or password!";
     private static final String ERROR_FAILED_SESSION = "Unable to create your session";
-    private static final String ERROR_MISSING_TOKEN = "token was missing from JSON payload";
+    private static final String ERROR_MISSING_TOKEN = "Token was missing from JSON payload";
 
     private static final String SUCCESS_SESSION_VALID = "Session valid";
     private static final String SUCCESS_SESSION_INVALID = "Session invalid";

@@ -1,9 +1,10 @@
 package smallproject;
 
 import com.zaxxer.hikari.HikariDataSource;
-import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 import smallproject.dao.ContactDao;
@@ -82,7 +83,23 @@ public class ApiServer {
     public static void main(String[] args) throws Exception {
 
         // create an instance of the Jetty server and tell it to listen on port 8080
-        final Server server = new Server(8080);
+        final Server server = new Server();
+
+        final HttpConfiguration https = new HttpConfiguration();
+        https.addCustomizer(new SecureRequestCustomizer());
+
+        final SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setKeyStorePath(ApiServer.class.getResource("/contactcube.jks").toExternalForm());
+        sslContextFactory.setKeyStorePassword("123456");
+        sslContextFactory.setKeyManagerPassword("123456");
+
+        final ServerConnector connector = new ServerConnector(server,
+                new SslConnectionFactory(sslContextFactory, "http/1.1"),
+                new HttpConnectionFactory(https));
+        connector.setPort(8080);
+
+        server.setConnectors(new Connector[]{connector});
+
 
         // create an instance of this ApiServer and set the server's handler
         final ApiServer api = new ApiServer();

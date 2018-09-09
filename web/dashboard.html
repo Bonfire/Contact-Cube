@@ -14,18 +14,60 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" integrity="sha384-rgWRqC0OFPisxlUvl332tiM/qmaNxnlY46eksSZD84t+s2vZlqGeHrncwIRX7CGp" crossorigin="anonymous"></script>
+    <script src="js/jquery.dataTables.min.js"></script>
     
     <script type="application/javascript">
       var checkboxSelectedCounter = 0;
       var deleteContactObjects = new Array();
+      var BASE_URL = "http://" + window.location.hostname + ":8080/";
       var token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-    
+      
       // Missing token redirect.
       if (token === "")
       {
         window.location.href = "login.html";
       }
+      
+      // Check for valid session.
+      $.ajax(
+      {
+        type: "POST",
+        url: BASE_URL + "login",
+        data: JSON.stringify(
+        {
+          "token": token,
+          "action": "is_session_valid"
+        }),
+        dataType: "json",
+        success: function (data, textStatus, jqXHR)
+        {
+          if (typeof data.success !== "undefined" && data.success === "Session invalid")
+          {
+            document.cookie = "token=; Max-Age=0;";
+            window.location.href = "login.html?logout=0";
+          }
+        },
+        error: function (jqXHR, textStatus, errorThrown)
+        {
+          if (typeof jqXHR.responseJSON !== "undefined" && typeof jqXHR.responseJSON.error !== "undefined")
+          {
+            console.log("SERVER ERROR: " + jqXHR.responseJSON.error);
+            
+            if (jqXHR.responseJSON.error === "Invalid token received!")
+            {
+              document.cookie = "token=; Max-Age=0;";
+              window.location.href = "login.html?logout=0";
+            }
+            
+            document.getElementById("serverErrorAlert").innerHTML = jqXHR.responseJSON.error;
+            $("#serverErrorAlert").show();
+          }
+          else
+          {
+            $("#connectionFailedAlert").show();
+          }
+        }
+      });
       
       function filterContent()
       {
@@ -99,7 +141,7 @@
         $.ajax(
         {
           type: "POST",
-          url: "http://142.93.253.171:8080/dashboard",
+          url: BASE_URL + "dashboard",
           data: JSON.stringify(
           {
             "token": token,
@@ -156,6 +198,14 @@
           }
         });
         
+        // Initialize all optional form fields.
+        document.getElementById("inputPhoneNumber").setCustomValidity("");
+        document.getElementById("inputEmail").setCustomValidity("");
+        document.getElementById("inputAddress").setCustomValidity("");
+        document.getElementById("inputCity").setCustomValidity("");
+        document.getElementById("inputState").setCustomValidity("");
+        document.getElementById("inputZipcode").setCustomValidity("");
+        
         
         
         
@@ -164,18 +214,103 @@
         $(document).on("keyup", "#inputFilter", filterContent);
         
         // Enables save contact button when form is filled.  On 'keyup' for responsiveness.
-        $(document).keyup(function ()
+        $("#formAddContact").keyup(function (e)
         {
-          var inputFirstNameFieldValid = document.getElementById("inputFirstName").checkValidity();
-          var inputLastNameFieldValid = document.getElementById("inputLastName").checkValidity();
-          var inputPhoneNumberFieldValid = document.getElementById("inputPhoneNumber").checkValidity();
-          //var inputEmailFieldValid = document.getElementById("inputEmail").checkValidity();
-          var inputAddressFieldValid = document.getElementById("inputAddress").checkValidity();
-          var inputCityFieldValid = document.getElementById("inputCity").checkValidity();
-          var inputStateFieldValid = document.getElementById("inputState").checkValidity();
-          var inputZipcodeFieldValid = document.getElementById("inputZipcode").checkValidity();
+          var inputFirstNameField = document.getElementById("inputFirstName");
+          var inputLastNameField = document.getElementById("inputLastName");
+          var inputPhoneNumberField = document.getElementById("inputPhoneNumber");
+          var inputEmailField = document.getElementById("inputEmail");
+          var inputAddressField = document.getElementById("inputAddress");
+          var inputCityField = document.getElementById("inputCity");
+          var inputStateField = document.getElementById("inputState");
+          var inputZipcodeField = document.getElementById("inputZipcode");
           
-          if (inputFirstNameFieldValid && inputLastNameFieldValid && inputPhoneNumberFieldValid && inputAddressFieldValid && inputCityFieldValid && inputStateFieldValid && inputZipcodeFieldValid)
+          // Some nice O(1) form field validation.
+          var field_functions = {
+            "inputFirstName": function ()
+            {
+              if (inputFirstNameField.value.match(/[a-z]/i))
+              {
+                inputFirstNameField.setCustomValidity("");
+              }
+              else
+              {
+                inputFirstNameField.setCustomValidity("Invalid");
+              }
+            },
+            "inputLastName": function ()
+            {
+              if (inputLastNameField.value.match(/[a-z]/i))
+              {
+                inputLastNameField.setCustomValidity("");
+              }
+              else
+              {
+                inputLastNameField.setCustomValidity("Invalid");
+              }
+            },
+            "inputPhoneNumber": function ()
+            {
+              if (inputPhoneNumberField.value !== "" && inputPhoneNumberField.value.replace(/[^0-9]/gi, "") === "")
+              {
+                inputPhoneNumberField.setCustomValidity("Invalid");
+              }
+              else
+              {
+                inputPhoneNumberField.setCustomValidity("");
+              }
+            },
+            "inputEmail": function ()
+            {
+              if (inputEmailField.value !== "" && inputEmailField.value.replace(/\s+/, "") === "")
+              {
+                inputEmailField.setCustomValidity("Invalid");
+              }
+              else
+              {
+                inputEmailField.setCustomValidity("");
+              }
+            },
+            "inputAddress": function ()
+            {
+              if (inputAddressField.value !== "" && !inputAddressField.value.match(/[a-z]/i))
+              {
+                inputAddressField.setCustomValidity("Invalid");
+              }
+              else
+              {
+                inputAddressField.setCustomValidity("");
+              }
+            },
+            "inputCity": function ()
+            {
+              if (inputCityField.value !== "" && !inputCityField.value.match(/[a-z]/i))
+              {
+                inputCityField.setCustomValidity("Invalid");
+              }
+              else
+              {
+                inputCityField.setCustomValidity("");
+              }
+            },
+            "inputZipcode": function ()
+            {
+              if (inputZipcodeField.value !== "" && inputZipcodeField.value.replace(/[^0-9]/gi, "") === "")
+              {
+                inputZipcodeField.setCustomValidity("Invalid");
+              }
+              else
+              {
+                inputZipcodeField.setCustomValidity("");
+              }
+            }
+          }
+          
+          // Update current field.
+          field_functions[e.target.id]();
+          
+          // Optional form field validation.
+          if (inputFirstNameField.checkValidity() && inputLastNameField.checkValidity() && inputPhoneNumberField.checkValidity() && inputEmailField.checkValidity() && inputAddressField.checkValidity() && inputCityField.checkValidity() && inputStateField.checkValidity() && inputZipcodeField.checkValidity())
           {
             $('#addContactButton').prop('disabled', false);
           }
@@ -186,9 +321,40 @@
         });
         
         // Reset all fields when modal disappears.
-        $('#addContactModal').on('hidden.bs.modal', function () {
+        $('#addContactModal').on('hidden.bs.modal', function ()
+        {
           document.getElementById("formAddContact").reset();
           $('#addContactButton').prop('disabled', true);
+          
+          document.getElementById("inputPhoneNumber").setCustomValidity("");
+          document.getElementById("inputEmail").setCustomValidity("");
+          document.getElementById("inputAddress").setCustomValidity("");
+          document.getElementById("inputCity").setCustomValidity("");
+          document.getElementById("inputState").setCustomValidity("");
+          document.getElementById("inputZipcode").setCustomValidity("");
+        });
+        
+        // Validate form on focusout.  Makes it easier to add a contact when autofilling.
+        $('#formAddContact').focusout(function ()
+        {
+          var inputFirstNameField = document.getElementById("inputFirstName");
+          var inputLastNameField = document.getElementById("inputLastName");
+          var inputPhoneNumberField = document.getElementById("inputPhoneNumber");
+          var inputEmailField = document.getElementById("inputEmail");
+          var inputAddressField = document.getElementById("inputAddress");
+          var inputCityField = document.getElementById("inputCity");
+          var inputStateField = document.getElementById("inputState");
+          var inputZipcodeField = document.getElementById("inputZipcode");
+        
+          // Optional form field validation.
+          if (inputFirstNameField.checkValidity() && inputLastNameField.checkValidity() && inputPhoneNumberField.checkValidity() && inputEmailField.checkValidity() && inputAddressField.checkValidity() && inputCityField.checkValidity() && inputStateField.checkValidity() && inputZipcodeField.checkValidity())
+          {
+            $('#addContactButton').prop('disabled', false);
+          }
+          else
+          {
+            $('#addContactButton').prop('disabled', true);
+          }
         });
         
         // Signs a user out of their account.
@@ -197,7 +363,7 @@
           $.ajax(
           {
             type: "POST",
-            url: "http://142.93.253.171:8080/dashboard",
+            url: BASE_URL + "dashboard",
             data: JSON.stringify(
             {
               "token": token,
@@ -243,19 +409,19 @@
         // Add contact to list.
         $("#addContactButton").click(function ()
         {
-          var inputFirstNameFieldValue = document.getElementById("inputFirstName").value.replace(/[^a-z]/gi, '');
-          var inputLastNameFieldValue = document.getElementById("inputLastName").value.replace(/[^a-z]/gi, '');
-          var inputEmailFieldValue = document.getElementById("inputEmail").value;
-          var inputPhoneNumberFieldValue = document.getElementById("inputPhoneNumber").value.replace(/[^0-9]/gi, '');
-          var inputAddressFieldValue = document.getElementById("inputAddress").value.replace(/[^0-9a-z]/gi, '');
-          var inputCityFieldValue = document.getElementById("inputCity").value.replace(/[^a-z]/gi, '');
-          var inputStateFieldValue = document.getElementById("inputState").value.replace(/[^a-z]/gi, '');
-          var inputZipcodeFieldValue = document.getElementById("inputZipcode").value.replace(/[^0-9]/gi, '');
+          var inputFirstNameFieldValue = document.getElementById("inputFirstName").value;
+          var inputLastNameFieldValue = document.getElementById("inputLastName").value;
+          var inputPhoneNumberFieldValue = document.getElementById("inputPhoneNumber").value.replace(/[^0-9]/gi, "");
+          var inputEmailFieldValue = document.getElementById("inputEmail").value.replace(/\s+/, "");
+          var inputAddressFieldValue = document.getElementById("inputAddress").value;
+          var inputCityFieldValue = document.getElementById("inputCity").value;
+          var inputStateFieldValue = document.getElementById("inputState").value;
+          var inputZipcodeFieldValue = document.getElementById("inputZipcode").value.replace(/[^0-9]/gi, "");
         
           $.ajax(
           {
             type: "POST",
-            url: "http://142.93.253.171:8080/dashboard",
+            url: BASE_URL + "dashboard",
             data: JSON.stringify(
             {
               "token": token,
@@ -277,11 +443,24 @@
             
               if (typeof data.success !== "undefined")
               {
+                if (inputPhoneNumberFieldValue.length === 11)
+                {
+                  inputPhoneNumberFieldValue = inputPhoneNumberFieldValue.replace(/(\d{1})(\d{3})(\d{3})(\d{4})/, '+$1 ($2) $3-$4');
+                }
+                else if (inputPhoneNumberFieldValue.length === 10)
+                {
+                  inputPhoneNumberFieldValue = inputPhoneNumberFieldValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+                }
+                else if (inputPhoneNumberFieldValue.length === 7)
+                {
+                  inputPhoneNumberFieldValue = inputPhoneNumberFieldValue.replace(/(\d{3})(\d{4})/, '$1-$2');
+                }
+              
                 contactTable.row.add(
                 [
                   inputFirstNameFieldValue,
                   inputLastNameFieldValue,
-                  inputPhoneNumberFieldValue.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'),
+                  inputPhoneNumberFieldValue,
                   inputEmailFieldValue,
                   inputAddressFieldValue,
                   inputCityFieldValue,
@@ -331,7 +510,7 @@
           $.ajax(
           {
             type: "POST",
-            url: "http://142.93.253.171:8080/dashboard",
+            url: BASE_URL + "dashboard",
             data: JSON.stringify(
             {
               "token": token,
@@ -451,20 +630,20 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="inputEmail">Email Address</label>
-                                        <input type="text" class="form-control" id="inputEmail" placeholder="name@email.com" required>
+                                        <input type="text" class="form-control" id="inputEmail" placeholder="name@email.com" pattern="[^@\s]+@[^@\s]+\.[^@\s]+">
                                     </div>
                                     <div class="form-group">
                                         <label for="inputPhoneNumber">Phone Number</label>
-                                        <input type="text" class="form-control" id="inputPhoneNumber" placeholder="1234567890" required>
+                                        <input type="text" class="form-control" id="inputPhoneNumber" placeholder="1234567890">
                                     </div>
                                     <div class="form-group">
                                         <label for="inputAddress">Address</label>
-                                        <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main Street" required>
+                                        <input type="text" class="form-control" id="inputAddress" placeholder="1234 Main Street">
                                     </div>
                                     <div class="form-row">
                                         <div class="form-group col-6">
                                             <label for="inputCity">City</label>
-                                            <input type="text" class="form-control" id="inputCity" placeholder="Orlando" required>
+                                            <input type="text" class="form-control" id="inputCity" placeholder="Orlando">
                                         </div>
                                         <div class="form-group col">
                                             <label for="inputState">State</label>
@@ -526,7 +705,7 @@
                                         </div>
                                         <div class="form-group col">
                                             <label for="inputZipcode">Zipcode</label>
-                                            <input type="text" class="form-control" id="inputZipcode" placeholder="32826" required>
+                                            <input type="text" class="form-control" id="inputZipcode" placeholder="32826">
                                         </div>
                                     </div>
                                 </form>
